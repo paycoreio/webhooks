@@ -1,32 +1,22 @@
 <?php
 
 
-namespace Webhook\Infrastructure\Strategy;
-
-use Webhook\Domain\Model\Message;
+namespace Webhook\Domain\Infrastructure\Strategy;
 
 
-/**
- * Class AbstractStrategy.
- */
-abstract class AbstractStrategy implements StrategyInterface
+abstract class AbstractStrategy implements \Serializable, StrategyInterface
 {
-    /**
-     * @param Message $message
-     *
-     * @return mixed|void
-     */
-    public function process(Message $message)
+    public function serialize()
     {
-        $interval = $this->compute($message);
-        $nextAttempt = time() + $interval;
-        $message->setNextAttempt(new \DateTime('@' . $nextAttempt)); // @ is needed, because of integer argument
+        return json_encode(get_object_vars($this));
     }
 
-    /**
-     * @param Message $message
-     *
-     * @return int
-     */
-    abstract protected function compute(Message $message);
+    public function unSerialize($serialized)
+    {
+        $data = json_decode($serialized);
+
+        foreach ($data as $k => $v) {
+            $this->{$k} = $v;
+        }
+    }
 }

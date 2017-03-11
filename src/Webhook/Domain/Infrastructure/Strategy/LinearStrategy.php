@@ -1,47 +1,40 @@
 <?php
 
 
-namespace Webhook\Infrastructure\Strategy;
-
-use Webhook\Domain\Model\Message;
-
+namespace Webhook\Domain\Infrastructure\Strategy;
 
 /**
  * Class LinearStrategy.
  */
-class LinearStrategy extends AbstractStrategy
+final class LinearStrategy extends AbstractStrategy
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $interval;
-    /**
-     * @var int
-     */
+
+    /** @var int */
     private $multiplier;
 
     /**
-     * LinearStrategy constructor.
-     *
      * @param int $interval
      * @param int $multiplier
      */
     public function __construct(int $interval = 5, int $multiplier = 1)
     {
         if ($interval < 0 || $multiplier < 0) {
-            throw new \RuntimeException('Interval and multiplier should be positive integers.');
+            throw new \InvalidArgumentException('Interval and multiplier should be positive integers.');
         }
         $this->interval = $interval;
         $this->multiplier = $multiplier;
     }
 
     /**
-     * @param Message $message
+     *
+     * @param int $attempt
      *
      * @return int
      */
-    protected function compute(Message $message)
+    public function process(int $attempt): int
     {
-        return $this->interval * $this->multiplier * ($message->getAttempts() + 1);
+        return $this->interval * $this->multiplier * $attempt;
     }
 }

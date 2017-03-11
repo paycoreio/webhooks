@@ -1,47 +1,42 @@
 <?php
 
 
-namespace Webhook\Infrastructure\Strategy;
-
-use Webhook\Domain\Model\Message;
+namespace Webhook\Domain\Infrastructure\Strategy;
 
 
 /**
  * Class ExponentialStrategy.
  */
-class ExponentialStrategy extends AbstractStrategy
+final class ExponentialStrategy extends AbstractStrategy
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $interval;
-    /**
-     * @var float
-     */
+
+    /** @var float */
     private $base;
 
     /**
-     * ExponentialStrategy constructor.
-     *
-     * @param int   $interval
+     * @param int $interval
      * @param float $base
      */
-    public function __construct(int $interval = 10, float $base = 1.5)
+    public function __construct(int $interval = 10, float $base = 2.0)
     {
         if ($interval < 0 || $base < 0) {
-            throw new \RuntimeException('Interval and base should be positive numbers.');
+            throw new \InvalidArgumentException('Interval and base should be positive numbers.');
         }
+
         $this->interval = $interval;
         $this->base = $base;
     }
 
     /**
-     * @param Message $message
+     *
+     * @param int $attempt
      *
      * @return int
      */
-    protected function compute(Message $message)
+    public function process(int $attempt): int
     {
-        return (int) ceil($this->interval + pow($this->base, $message->getAttempts() + 1));
+        return (int) ceil($this->interval + pow($this->base, $attempt));
     }
 }

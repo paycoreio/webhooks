@@ -5,8 +5,8 @@ namespace Tests;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Webhook\Domain\Infrastructure\Handler;
 use Webhook\Domain\Model\Message;
-use Webhook\Infrastructure\Handler;
 
 
 class HandlerTest extends TestCase
@@ -19,12 +19,8 @@ class HandlerTest extends TestCase
     public function setUp()
     {
         $this->handler = new Handler();
-//        putenv('HTTP_PROXY=http://localhost:3128');
     }
 
-    /**
-     * @Tests
-     */
     public function testHandlerIsHandler()
     {
         Assert::assertInstanceOf(Handler::class, $this->handler);
@@ -47,7 +43,35 @@ class HandlerTest extends TestCase
 
         $result = $this->handler->handle($message);
 
-        Assert::assertEquals($expected, $result->isSuccess());
+        self::assertEquals($expected, $result->isSuccess());
+    }
+
+    /**
+     * @param $message
+     *
+     * @dataProvider dataProvider
+     */
+    public function testTransportError($message)
+    {
+        $result = $this->handler->handle($message);
+
+        self::assertTrue($result->isTransportError());
+    }
+
+    public function dataProvider()
+    {
+        return [
+            [new Message('https://httpbinorg/foo', '')]
+        ];
+    }
+
+    public function testRawData()
+    {
+        $message = new Message('http://httpbin.org/post', ['foo' => 'bar']);
+        $message->asJson();
+
+        $res = $this->handler->handle($message);
+        $this->assertTrue($res->isSuccess());
     }
 
     /**

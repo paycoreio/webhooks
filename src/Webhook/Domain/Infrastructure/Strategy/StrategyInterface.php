@@ -1,10 +1,7 @@
 <?php
 
 
-namespace Webhook\Infrastructure\Strategy;
-
-use Webhook\Domain\Model\Message;
-
+namespace Webhook\Domain\Infrastructure\Strategy;
 
 /**
  * Interface StrategyInterface.
@@ -12,9 +9,10 @@ use Webhook\Domain\Model\Message;
 interface StrategyInterface
 {
     /**
-     * @param Message $message
      *
-     * @return mixed
+     * @param int $attempt
+     *
+     * @return int
      */
-    public function process(Message $message);
+    public function process(int $attempt): int;
 }

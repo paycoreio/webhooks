@@ -1,8 +1,7 @@
 <?php
 
 
-namespace Webhook\Infrastructure;
-
+namespace Webhook\Domain\Infrastructure;
 
 final class RequestResult
 {
@@ -13,7 +12,7 @@ final class RequestResult
 
     private $status;
 
-    private function __construct($status)
+    private function __construct(string $status)
     {
         $this->status = $status;
     }

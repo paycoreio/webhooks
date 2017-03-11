@@ -1,15 +1,15 @@
 <?php
 
 
-namespace Webhook\Infrastructure;
+namespace Webhook\Domain\Infrastructure;
 
 use GuzzleHttp\Psr7\Request;
-use Http\Client\Exception\HttpException;
+use Http\Client\Exception\TransferException;
 use Http\Discovery\HttpClientDiscovery;
 use Psr\Http\Message\ResponseInterface;
 use Webhook\Domain\Model\Message;
 
-class Handler
+final class Handler implements HandlerInterface
 {
     /** @var \Http\Client\HttpClient */
     protected $httpClient;
@@ -47,7 +47,7 @@ class Handler
                 return RequestResult::contentMissMatch();
             }
 
-        } catch (HttpException $e) {
+        } catch (TransferException $e) {
             $result = RequestResult::transportError();
         }
 
@@ -62,13 +62,14 @@ class Handler
     private function createRequest(Message $message)
     {
         $headers = [
-//            'Next-Retry'  => $message->getNextAttempt()->format('U'),
-            'Retry-Count' => $message->getAttempts(),
+            'Next-Retry'  => $message->getNextAttempt()->format('U'),
+            'Retry-Count' => $message->getAttempt(),
             'User-Agent'  => $message->getUserAgent() ? $message->getUserAgent() : $this->defaultClient
         ];
 
-        if ($message->isRaw()) {
-            $body = $message->getBody();
+        if ($message->isRaw()) { // send json
+            $headers['Content-Type'] = 'application/json';
+            $body = json_encode($message->getBody());
         } else {
             $body = http_build_query($message->getBody());
         }

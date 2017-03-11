@@ -1,2 +1,5 @@
 vendor
 build
+var/cache
+var/logs
+var/sessions
