@@ -22,8 +22,11 @@ final class MessageConsumer
      * @param HandlerInterface $retryHandler
      * @param MessageRepositoryInterface $repository
      */
-    public function __construct(HandlerInterface $handler, HandlerInterface $retryHandler, MessageRepositoryInterface $repository)
-    {
+    public function __construct(
+        HandlerInterface $handler,
+        HandlerInterface $retryHandler,
+        MessageRepositoryInterface $repository
+    ) {
         $this->handler = $handler;
         $this->retryHandler = $retryHandler;
         $this->repository = $repository;
@@ -37,14 +40,17 @@ final class MessageConsumer
     public function consume($id)
     {
         $message = $this->repository->get($id);
-        /** @var RequestResult $r */
-        $r = $this->handler->handle($message);
 
-        if (!$r->isSuccess()) {
-            $this->retryHandler->handle($message);
+        if (null !== $message) {
+            /** @var RequestResult $r */
+            $r = $this->handler->handle($message);
+
+            if (!$r->isSuccess()) {
+                $this->retryHandler->handle($message);
+            }
+
+            $message->setStatus(Message::STATUS_DONE);
+            $this->repository->update($message);
         }
-
-        $message->setStatus(Message::STATUS_DONE);
-        $this->repository->update($message);
     }
 }

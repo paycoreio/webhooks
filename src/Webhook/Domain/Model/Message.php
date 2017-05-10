@@ -15,7 +15,7 @@ class Message implements \JsonSerializable
     /**
      * @var string
      */
-    private $id; // json or array, because we want raw send
+    private $id;
     /**
      * @var string
      */
@@ -73,8 +73,7 @@ class Message implements \JsonSerializable
         $this->body = $body;
         $this->created = new \DateTime();
         $this->status = self::STATUS_QUEUED;
-        $this->strategy = new LinearStrategy(60);
-        $this->calculateNextRetry();
+        $this->setStrategy(new LinearStrategy(60));
     }
 
     private function calculateNextRetry()
