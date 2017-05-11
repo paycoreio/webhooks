@@ -20,7 +20,7 @@ class TestCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $producer = $this->getContainer()->get('amqp.producer');
-        $m = new Message('http://httpbin.org/post', '');
+        $m = new Message('http://httpbin.org/post2', '');
         $this->getContainer()->get('message.repository')->update($m);
 
         $producer->publish($m);

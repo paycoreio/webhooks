@@ -18,5 +18,6 @@
         <field name="userAgent" type="string" nullable="true"/>
         <field name="raw" type="boolean"/>
         <field name="status" type="string"/>
+        <field name="statusDetails" type="string" nullable="true"/>
     </entity>
 </doctrine-mapping>

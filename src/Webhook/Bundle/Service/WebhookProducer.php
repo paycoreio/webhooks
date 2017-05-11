@@ -23,12 +23,16 @@ class WebhookProducer
         $this->queue = $queue;
     }
 
+    /**
+     * @param Message $message
+     */
     public function publish(Message $message)
     {
         $id = $message->getId();
         $channel = $this->client->channel();
-        $channel->queueDeclare($this->queue);
-
+        $channel->queueDeclare($this->queue, false, false, false, false, false,
+            ['x-delayed-type' => "direct"]
+        );
 
         $channel->publish($id, [], '', $this->queue);
     }

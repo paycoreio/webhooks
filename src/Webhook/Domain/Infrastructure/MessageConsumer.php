@@ -42,14 +42,20 @@ final class MessageConsumer
         $message = $this->repository->get($id);
 
         if (null !== $message) {
+            if ($message->getStatus() === Message::STATUS_FAILED) {
+                return;
+            }
+
             /** @var RequestResult $r */
             $r = $this->handler->handle($message);
+            $message->setStatusDetails($r->getDetails());
 
             if (!$r->isSuccess()) {
                 $this->retryHandler->handle($message);
+            } else {
+                $message->setStatus(Message::STATUS_DONE);
             }
 
-            $message->setStatus(Message::STATUS_DONE);
             $this->repository->update($message);
         }
     }

@@ -38,7 +38,7 @@ final class Handler implements HandlerInterface
             $response = $this->httpClient->sendRequest($request);
 
             if ($response->getStatusCode() !== $message->getExpectedCode()) {
-                return RequestResult::codeMissMatch();
+                return RequestResult::codeMissMatch($response->getStatusCode());
             }
 
             if ($message->getExpectedContent() !== null
@@ -48,7 +48,7 @@ final class Handler implements HandlerInterface
             }
 
         } catch (TransferException $e) {
-            $result = RequestResult::transportError();
+            $result = RequestResult::transportError($e->getMessage());
         }
 
         return $result;

@@ -66,6 +66,9 @@ class Message implements \JsonSerializable
     /** @var  StrategyInterface */
     private $strategy;
 
+    /** @var  string */
+    private $statusDetails;
+
     public function __construct(string $url, $body)
     {
         $this->id = Uuid::getFactory()->uuid4()->toString();
@@ -103,7 +106,7 @@ class Message implements \JsonSerializable
     {
         $this->attempt++;
 
-        if ($this->attempt == $this->maxAttempts) {
+        if ($this->attempt === $this->maxAttempts) {
             $this->status = self::STATUS_FAILED;
         } else {
             $this->status = self::STATUS_QUEUED;
@@ -269,5 +272,21 @@ class Message implements \JsonSerializable
     public function getNextAttempt(): \DateTime
     {
         return $this->nextAttempt;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusDetails()
+    {
+        return $this->statusDetails;
+    }
+
+    /**
+     * @param string $statusDetails
+     */
+    public function setStatusDetails(string $statusDetails)
+    {
+        $this->statusDetails = $statusDetails;
     }
 }

@@ -10,6 +10,8 @@
     <services>
         <service id="message.handler" class="Webhook\Domain\Infrastructure\Handler"/>
         <service id="message.retry.handler" class="Webhook\Bundle\Service\RetryHandler">
+            <argument type="service" id="amqp.client"/>
+            <argument>%webhooks.queue%</argument>
         </service>
 
         <service id="amqp.client" class="Bunny\Client">

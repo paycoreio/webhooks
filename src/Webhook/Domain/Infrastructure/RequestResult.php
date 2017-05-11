@@ -10,11 +10,16 @@ final class RequestResult
     const CONTENT_MISS_MATCH = 'content_miss_match';
     const TRANSPORT_ERROR = 'transport_error';
 
+    /** @var string */
     private $status;
 
-    private function __construct(string $status)
+    /** @var  string|null */
+    private $details;
+
+    private function __construct(string $status, string $details = '')
     {
         $this->status = $status;
+        $this->details = $details;
     }
 
     public static function success()
@@ -22,9 +27,9 @@ final class RequestResult
         return new self(self::SUCCESS);
     }
 
-    public static function codeMissMatch()
+    public static function codeMissMatch($code)
     {
-        return new self(self::CODE_MISS_MATCH);
+        return new self(self::CODE_MISS_MATCH, (string) $code);
     }
 
     public static function contentMissMatch()
@@ -32,15 +37,15 @@ final class RequestResult
         return new self(self::CONTENT_MISS_MATCH);
     }
 
-    public static function transportError()
+    public static function transportError(string $error)
     {
-        return new self(self::TRANSPORT_ERROR);
+        return new self(self::TRANSPORT_ERROR, $error);
     }
 
     /**
      * @return bool
      */
-    public function isTransportError()
+    public function isTransportError(): bool
     {
         return $this->status === self::TRANSPORT_ERROR;
     }
@@ -48,7 +53,7 @@ final class RequestResult
     /**
      * @return bool
      */
-    public function isSuccess()
+    public function isSuccess(): bool
     {
         return $this->status === self::SUCCESS;
     }
@@ -56,7 +61,7 @@ final class RequestResult
     /**
      * @return bool
      */
-    public function isContentMissMatch()
+    public function isContentMissMatch(): bool
     {
         return $this->status === self::CONTENT_MISS_MATCH;
     }
@@ -64,8 +69,16 @@ final class RequestResult
     /**
      * @return bool
      */
-    public function isCodeMissMatch()
+    public function isCodeMissMatch(): bool
     {
         return $this->status === self::CODE_MISS_MATCH;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getDetails()
+    {
+        return $this->status . ': ' . $this->details;
     }
 }
