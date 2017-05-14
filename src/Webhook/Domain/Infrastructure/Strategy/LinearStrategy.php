@@ -9,10 +9,10 @@ namespace Webhook\Domain\Infrastructure\Strategy;
 final class LinearStrategy extends AbstractStrategy
 {
     /** @var int */
-    private $interval;
+    protected $interval;
 
     /** @var int */
-    private $multiplier;
+    protected  $multiplier;
 
     /**
      * @param int $interval

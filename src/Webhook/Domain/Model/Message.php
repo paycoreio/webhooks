@@ -79,6 +79,12 @@ class Message implements \JsonSerializable
         $this->setStrategy(new LinearStrategy(60));
     }
 
+    public function setStrategy(StrategyInterface $strategy)
+    {
+        $this->strategy = $strategy;
+        $this->calculateNextRetry();
+    }
+
     private function calculateNextRetry()
     {
         $interval = $this->strategy->process($this->attempt);
@@ -96,15 +102,10 @@ class Message implements \JsonSerializable
         $this->nextAttempt = $nextAttempt;
     }
 
-    public function setStrategy(StrategyInterface $strategy)
-    {
-        $this->strategy = $strategy;
-        $this->calculateNextRetry();
-    }
-
     public function retry()
     {
         $this->attempt++;
+        $this->calculateNextRetry();
 
         if ($this->attempt === $this->maxAttempts) {
             $this->status = self::STATUS_FAILED;
@@ -226,12 +227,16 @@ class Message implements \JsonSerializable
 
     public function jsonSerialize()
     {
-        return [
-            'status'     => $this->getStatus(),
-            'created'    => $this->getCreated()->format('U'),
-            'attempt'    => $this->getAttempt(),
-            'next-retry' => $this->getNextAttempt()->format('U'),
-        ];
+        $result = [];
+        foreach (get_object_vars($this) as $k => $v) {
+            if ($v instanceof \DateTime) {
+                $v = $v->format('U');
+            }
+
+            $result[$k] = $v;
+        }
+
+        return $result;
     }
 
     /**

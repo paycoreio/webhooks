@@ -23,8 +23,14 @@ class ConsumerCommand extends ContainerAwareCommand
         $bunny = $this->getContainer()->get('amqp.client');
 
         $channel = $bunny->channel();
-        $queue = $this->getContainer()->getParameter('webhooks.queue');
-        $channel->queueDeclare($queue);
+        $queueName = $this->getContainer()->getParameter('webhooks.queue');
+
+        $channel->exchangeDeclare($queueName, 'x-delayed-message', false, true, false, false, false,
+            ['x-delayed-type' => 'direct']
+        );
+
+        $queue = $channel->queueDeclare($queueName, false, false, true, false);
+        $channel->queueBind($queue->queue, $queueName);
 
         $consumer = $this->getContainer()->get('webhooks.consumer');
 
@@ -33,7 +39,7 @@ class ConsumerCommand extends ContainerAwareCommand
                 $consumer->consume($message->content);
                 $channel->ack($message);
             },
-            $queue
+            $queueName
         );
     }
 

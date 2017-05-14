@@ -6,7 +6,7 @@ namespace Webhook\Bundle\Service;
 use Bunny\Client;
 use Webhook\Domain\Model\Message;
 
-class WebhookProducer
+final class WebhookProducer
 {
     /**
      * @var Client
@@ -15,12 +15,12 @@ class WebhookProducer
     /**
      * @var string
      */
-    private $queue;
+    private $queueName;
 
     public function __construct(Client $client, string $queue)
     {
         $this->client = $client;
-        $this->queue = $queue;
+        $this->queueName = $queue;
     }
 
     /**
@@ -30,11 +30,12 @@ class WebhookProducer
     {
         $id = $message->getId();
         $channel = $this->client->channel();
-        $channel->queueDeclare($this->queue, false, false, false, false, false,
-            ['x-delayed-type' => "direct"]
+
+        $channel->exchangeDeclare($this->queueName, 'x-delayed-message', false, true, false, false, false,
+            ['x-delayed-type' => 'direct']
         );
 
-        $channel->publish($id, [], '', $this->queue);
+        $channel->publish($id, [], $this->queueName);
     }
 
 }

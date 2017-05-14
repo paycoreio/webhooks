@@ -9,7 +9,7 @@ use Webhook\Domain\Model\Message;
 use Bunny\Client;
 
 
-class RetryHandler implements HandlerInterface
+final class RetryHandler implements HandlerInterface
 {
     /**
      * @var Client
@@ -18,12 +18,12 @@ class RetryHandler implements HandlerInterface
     /**
      * @var string
      */
-    private $queue;
+    private $queueName;
 
     public function __construct(Client $client, string $queue)
     {
         $this->client = $client;
-        $this->queue = $queue;
+        $this->queueName = $queue;
     }
 
     public function handle(Message $message)
@@ -31,11 +31,15 @@ class RetryHandler implements HandlerInterface
         $id = $message->getId();
 
         $channel = $this->client->channel();
-        $channel->queueDeclare($this->queue, false, false, false, false, false,
-            ['x-delayed-type' => "direct"]
+
+        $channel->exchangeDeclare($this->queueName, 'x-delayed-message', false, true, false, false, false,
+            ['x-delayed-type' => 'direct']
         );
+
         $delay = ($message->getNextAttempt()->format('U') - time()) * 1000;
-        $channel->publish($id, ['x-delay' => $delay], '', $this->queue);
-        $message->retry();
+
+        dump('Delay on ' . $delay);
+
+        $channel->publish($id, ['x-delay' => $delay], $this->queueName);
     }
 }

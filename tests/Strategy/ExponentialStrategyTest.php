@@ -33,4 +33,18 @@ class ExponentialStrategyTest extends TestCase
             $i++;
         }
     }
+
+    /**
+     * @test
+     */
+    public function it_the_same_after_serialization()
+    {
+        $strategy = new ExponentialStrategy();
+
+        /** @var ExponentialStrategy $unsertialized */
+        $unsertialized = unserialize(serialize($strategy));
+
+        self::assertInstanceOf(ExponentialStrategy::class, $unsertialized);
+
+    }
 }

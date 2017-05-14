@@ -18,11 +18,12 @@ class IndexController extends Controller
      * @param Request $request
      *
      * @return Response
-     * @Route("/", methods={"POST"})
+     * @Route("/message", methods={"POST"})
      */
     public function indexAction(Request $request)
     {
         $data = json_encode($request->getContent(), true);
+
         if (empty($data) || json_last_error() !== JSON_ERROR_NONE) {
             return new JsonResponse(['error' => 'Malformed json provided.'], 400);
         }

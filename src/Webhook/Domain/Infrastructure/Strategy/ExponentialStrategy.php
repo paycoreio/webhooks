@@ -10,10 +10,10 @@ namespace Webhook\Domain\Infrastructure\Strategy;
 final class ExponentialStrategy extends AbstractStrategy
 {
     /** @var int */
-    private $interval;
+    protected $interval;
 
     /** @var float */
-    private $base;
+    protected  $base;
 
     /**
      * @param int $interval

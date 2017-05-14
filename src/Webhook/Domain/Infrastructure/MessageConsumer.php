@@ -52,6 +52,7 @@ final class MessageConsumer
 
             if (!$r->isSuccess()) {
                 $this->retryHandler->handle($message);
+                $message->retry();
             } else {
                 $message->setStatus(Message::STATUS_DONE);
             }
