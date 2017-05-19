@@ -17,6 +17,11 @@ final class WebhookProducer
      */
     private $queueName;
 
+    /**
+     * WebhookProducer constructor.
+     * @param Client $client
+     * @param string $queue
+     */
     public function __construct(Client $client, string $queue)
     {
         $this->client = $client;

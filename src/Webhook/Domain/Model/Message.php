@@ -69,6 +69,11 @@ class Message implements \JsonSerializable
     /** @var  string */
     private $statusDetails;
 
+    /**
+     * Message constructor.
+     * @param string $url
+     * @param $body
+     */
     public function __construct(string $url, $body)
     {
         $this->id = Uuid::getFactory()->uuid4()->toString();

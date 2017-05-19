@@ -15,6 +15,13 @@
         </service>
 
         <service id="amqp.client" class="Bunny\Client">
+            <argument type="collection">
+                <argument type="string" key="host">%rabbitmq_host%</argument>
+                <argument type="string" key="port">%rabbitmq_port%</argument>
+                <!--<argument type="string" key="vhost">%rabbitmq_virtual_host%</argument>-->
+                <!--<argument type="string" key="user">%rabbitmq_user%</argument>-->
+                <!--<argument type="string" key="password">%rabbitmq_password%</argument>-->
+            </argument>
             <call method="connect"/>
         </service>
 

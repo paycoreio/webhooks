@@ -11,6 +11,10 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class ConsumerCommand
+ * @package Webhook\Bundle\Command
+ */
 class ConsumerCommand extends ContainerAwareCommand
 {
     protected function configure()
@@ -18,6 +22,11 @@ class ConsumerCommand extends ContainerAwareCommand
         $this->setName('test:con');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $bunny = $this->getContainer()->get('amqp.client');

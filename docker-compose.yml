@@ -8,13 +8,40 @@ services:
             POSTGRES_USER: webhooks
         ports:
             - "5432:5432"
+        networks:
+          app_net:
+            ipv4_address: 10.5.0.6
 
     rabbit:
         image: dzubchik/rabbitmq
         ports:
             - "15672:15672"
             - "5672:5672"
-    redis:
-        image: redis
+        networks:
+          app_net:
+            ipv4_address: 10.5.0.7
+
+    php:
+        build:
+            dockerfile: etc/docker/php/Dockerfile
+            context: .
         ports:
-            - "6379:6379"
+           - "9001:9001"
+        volumes:
+            - .:/app
+        links:
+            - rabbit
+            - database
+        working_dir: /app
+        networks:
+          app_net:
+            ipv4_address: 10.5.0.8
+
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.5.0.0/16
+        gateway: 10.5.0.1
