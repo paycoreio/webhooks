@@ -8,7 +8,10 @@ use PHPUnit\Framework\TestCase;
 use Webhook\Domain\Infrastructure\Handler;
 use Webhook\Domain\Model\Message;
 
-
+/**
+ * Class HandlerTest
+ * @package Tests
+ */
 class HandlerTest extends TestCase
 {
     /**

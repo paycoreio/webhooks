@@ -4,6 +4,7 @@
 namespace Webhook\Domain\Model;
 
 use Ramsey\Uuid\Uuid;
+use Webhook\Domain\Infrastructure\Strategy\AbstractStrategy;
 use Webhook\Domain\Infrastructure\Strategy\LinearStrategy;
 use Webhook\Domain\Infrastructure\Strategy\StrategyInterface;
 
@@ -63,7 +64,7 @@ class Message implements \JsonSerializable
     /** @var  string */
     private $userAgent;
 
-    /** @var  StrategyInterface */
+    /** @var  StrategyInterface|AbstractStrategy */
     private $strategy;
 
     /** @var  string */
@@ -84,10 +85,21 @@ class Message implements \JsonSerializable
         $this->setStrategy(new LinearStrategy(60));
     }
 
+    /**
+     * @param StrategyInterface $strategy
+     */
     public function setStrategy(StrategyInterface $strategy)
     {
         $this->strategy = $strategy;
         $this->calculateNextRetry();
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->strategy->getOptions();
     }
 
     private function calculateNextRetry()
@@ -230,17 +242,22 @@ class Message implements \JsonSerializable
         $this->processed = new \DateTime();
     }
 
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
         $result = [];
         foreach (get_object_vars($this) as $k => $v) {
+            if ($v instanceof StrategyInterface) {
+                continue;
+            }
             if ($v instanceof \DateTime) {
                 $v = $v->format('U');
             }
-
             $result[$k] = $v;
         }
-
+        $result['strategyOptions'] = $this->getOptions();
         return $result;
     }
 

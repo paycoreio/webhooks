@@ -8,11 +8,13 @@ namespace Webhook\Domain\Infrastructure\Strategy;
  */
 final class LinearStrategy extends AbstractStrategy
 {
+    const ALIAS = 'linear';
+
     /** @var int */
     protected $interval;
 
     /** @var int */
-    protected  $multiplier;
+    protected $multiplier;
 
     /**
      * @param int $interval
@@ -28,6 +30,22 @@ final class LinearStrategy extends AbstractStrategy
     }
 
     /**
+     * @param int $interval
+     */
+    public function setInterval(int $interval)
+    {
+        $this->interval = $interval;
+    }
+
+    /**
+     * @param int $multiplier
+     */
+    public function setMultiplier(int $multiplier)
+    {
+        $this->multiplier = $multiplier;
+    }
+
+    /**
      *
      * @param int $attempt
      *
@@ -36,5 +54,17 @@ final class LinearStrategy extends AbstractStrategy
     public function process(int $attempt): int
     {
         return $this->interval * $this->multiplier * $attempt;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return [
+            'alias' => static::ALIAS,
+            'interval' => $this->interval,
+            'multiplier' => $this->multiplier,
+        ];
     }
 }
