@@ -6,6 +6,7 @@ namespace Webhook\Bundle\Exception;
 
 /**
  * Class BodyMissingException
+ *
  * @package Webhook\Bundle\Exception
  */
 class BodyMissingException extends \InvalidArgumentException

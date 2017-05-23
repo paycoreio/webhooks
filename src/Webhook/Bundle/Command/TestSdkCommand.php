@@ -9,11 +9,11 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webhook\Sdk\Client;
-use Webhook\Sdk\Enum\StrategiesEnum;
 use Webhook\Sdk\RequestMessage;
 
 /**
  * Class TestSdkCommand
+ *
  * @package Webhook\Bundle\Command
  */
 class TestSdkCommand extends ContainerAwareCommand
@@ -34,9 +34,7 @@ class TestSdkCommand extends ContainerAwareCommand
             'base_uri' => 'http://localhost:8080/app_dev.php',
         ]);
         $requestMessage = new RequestMessage('http://httpbin.org/post', 'test message');
-        $requestMessage->setStrategy(StrategiesEnum::EXPONENTIAL);
-        $requestMessage->setInterval(200);
-        $requestMessage->setBase(2);
+        $requestMessage->setStrategy('exponential');
         $sdkClient->send($requestMessage);
     }
 }

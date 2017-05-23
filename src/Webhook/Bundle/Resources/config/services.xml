@@ -6,6 +6,10 @@
 
     <parameters>
         <parameter type="string" key="webhooks.queue">webhooks</parameter>
+        <parameter type="collection" key="strategies.map">
+            <parameter type="string" key="exponential">Webhook\Domain\Infrastructure\Strategy\ExponentialStrategy</parameter>
+            <parameter type="string" key="linear">Webhook\Domain\Infrastructure\Strategy\LinearStrategy</parameter>
+        </parameter>
     </parameters>
     <services>
         <service id="message.handler" class="Webhook\Domain\Infrastructure\Handler"/>
@@ -13,7 +17,7 @@
             <argument type="service" id="amqp.client"/>
             <argument>%webhooks.queue%</argument>
         </service>
-        <service id="request.content.validator" class="Webhook\Bundle\Service\Validation\RequestContentValidator"/>
+
 
         <service id="amqp.client" class="Bunny\Client">
             <argument type="collection">
@@ -38,15 +42,5 @@
             <argument type="service" id="message.repository"/>
         </service>
 
-        <service id="message.form.api.sent.event.listener"
-                 class="Webhook\Bundle\EventListener\MessageFromApiSentEventListener">
-            <argument type="service" id="message.repository"/>
-            <argument type="service" id="strategies.mapper"/>
-            <tag name="kernel.event_subscriber" event="message.from.api.sent.event" method="handle"/>
-        </service>
-
-        <service id="strategies.mapper" class="Webhook\Bundle\Service\StrategiesMapper">
-            <argument>%strategies%</argument>
-        </service>
     </services>
 </container>

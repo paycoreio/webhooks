@@ -8,16 +8,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Webhook\Bundle\Controller\ParameterBag\StrategyParameterBag;
-use Webhook\Bundle\Event\MessageFromApiSentEvent;
-use Webhook\Bundle\Events;
-use Webhook\Bundle\Service\StrategyFactory;
+
+use Symfony\Component\Validator\Constraints\Choice;
+use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\Required;
+use Symfony\Component\Validator\Constraints\Url;
+use Symfony\Component\Validator\Validation;
 use Webhook\Domain\Model\Message;
-use Webmozart\Assert\Assert;
+
 
 /**
  * Class IndexController
+ *
  * @package Webhook\Bundle\Controller
  */
 class IndexController extends Controller
@@ -31,21 +33,37 @@ class IndexController extends Controller
     public function indexAction(Request $request)
     {
         $data = json_decode($request->getContent(), true);
+
         if (empty($data) || json_last_error() !== JSON_ERROR_NONE) {
             return new JsonResponse(['error' => 'Malformed json provided.'], 400);
         }
 
-        $validator = $this->get('request.content.validator');
-        $result = $validator->validate($data);
+        $strategies = $this->getParameter('strategies.map');
+        $constraints = new Collection([
+            'fields' => [
+                'body'     => new Required(),
+                'url'      => new Url(),
+                'strategy' => new Choice(['choices' => array_keys($strategies), 'strict' => true]),
+                'raw'      => new Choice(['choices' => [true, false], 'strict' => true])
+            ]
+        ]);
 
-        if (!$result->isValid) {
-            return new JsonResponse(['error' => $result->errorMessage], 400);
+        $validator = Validation::createValidator();
+        $result = $validator->validate($data, $constraints);
+
+        if (0 !== $result->count()) {
+            dump($result);
+            return new JsonResponse(['errors' => ''], 400);
         }
 
-        $bag = new StrategyParameterBag($request->query);
-        $event = new MessageFromApiSentEvent($data, $bag);
-        $this->get('event_dispatcher')->dispatch(Events::MESSAGE_FROM_API_SENT_EVENT, $event);
-        $message = $event->getMessage();
+        // build message
+        $message = new Message($data['url'], $data['body']);
+
+        if (null !== $data['strategy']) {
+            $className = $data['strategy'];
+            $strategy = new $className;
+            $message->setStrategy($strategy);
+        }
 
         $this->get('amqp.producer')->publish($message);
         return new JsonResponse(['data' => $message], Response::HTTP_CREATED);
@@ -62,7 +80,7 @@ class IndexController extends Controller
         $message = $this->get('message.repository')->get($id);
 
         if (null === $message) {
-            return new JsonResponse('Message not found', 404);
+            return new JsonResponse(['error' => 'Message not found'], 404);
         }
 
         return new JsonResponse($message);

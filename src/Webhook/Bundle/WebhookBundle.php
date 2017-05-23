@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * Class WebhookBundle
+ *
  * @package Webhook\Bundle
  */
 class WebhookBundle extends Bundle

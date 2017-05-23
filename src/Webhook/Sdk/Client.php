@@ -8,6 +8,7 @@ use GuzzleHttp\RequestOptions;
 
 /**
  * Class Client
+ *
  * @package Webhook\Sdk
  */
 class Client
@@ -17,6 +18,7 @@ class Client
 
     /**
      * Client constructor.
+     *
      * @param array $options
      */
     public function __construct($options = [])
@@ -26,6 +28,7 @@ class Client
 
     /**
      * @param RequestMessage $message
+     *
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function send(RequestMessage $message)
@@ -33,14 +36,13 @@ class Client
         $options = [
             RequestOptions::BODY => json_encode($message),
         ];
-        if ($message->getQuery() !== null && !empty($message->getQuery())) {
-            $options['query'] = $message->getQuery();
-        }
+
         return $this->client->post('/message', $options);
     }
 
     /**
      * @param string $id
+     *
      * @return ResponseMessage
      */
     public function getMessage(string $id)

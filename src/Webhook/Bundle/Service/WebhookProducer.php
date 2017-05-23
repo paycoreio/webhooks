@@ -19,6 +19,7 @@ final class WebhookProducer
 
     /**
      * WebhookProducer constructor.
+     *
      * @param Client $client
      * @param string $queue
      */

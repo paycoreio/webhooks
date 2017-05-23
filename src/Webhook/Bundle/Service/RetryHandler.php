@@ -10,6 +10,7 @@ use Bunny\Client;
 
 /**
  * Class RetryHandler
+ *
  * @package Webhook\Bundle\Service
  */
 final class RetryHandler implements HandlerInterface
@@ -22,6 +23,7 @@ final class RetryHandler implements HandlerInterface
 
     /**
      * RetryHandler constructor.
+     *
      * @param Client $client
      * @param string $queue
      */

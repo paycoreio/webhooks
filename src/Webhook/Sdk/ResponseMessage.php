@@ -6,6 +6,7 @@ namespace Webhook\Sdk;
 
 /**
  * Class ResponseMessage
+ *
  * @package Webhook\Sdk
  */
 class ResponseMessage
@@ -57,6 +58,7 @@ class ResponseMessage
 
     /**
      * ResponseMessage constructor.
+     *
      * @param array $options
      */
     public function __construct(array $options = [])
@@ -65,7 +67,7 @@ class ResponseMessage
             foreach ($options as $k => $v) {
                 if (property_exists($this, $k)) {
                     if (static::isTimestamp($v)) {
-                        $v = (new \DateTime())->setTimestamp((int)$v);
+                        $v = (new \DateTime())->setTimestamp((int) $v);
                     }
                     $this->{$k} = $v;
                 }
@@ -75,7 +77,7 @@ class ResponseMessage
 
     public static function isTimestamp($timestamp)
     {
-        return ((string)(int)$timestamp === $timestamp)
+        return ((string) (int) $timestamp === $timestamp)
             && ($timestamp <= PHP_INT_MAX)
             && ($timestamp >= ~PHP_INT_MAX)
             && (!strtotime($timestamp));
@@ -83,11 +85,13 @@ class ResponseMessage
 
     /**
      * @param $json
+     *
      * @return static
      */
     public static function fromJson($json)
     {
         $array = json_decode($json, true);
+
         return new static($array);
     }
 }

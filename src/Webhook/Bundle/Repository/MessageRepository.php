@@ -10,6 +10,7 @@ use Webhook\Domain\Repository\MessageRepositoryInterface;
 
 /**
  * Class MessageRepository
+ *
  * @package Webhook\Bundle\Repository
  */
 class MessageRepository implements MessageRepositoryInterface
@@ -21,6 +22,7 @@ class MessageRepository implements MessageRepositoryInterface
 
     /**
      * MessageRepository constructor.
+     *
      * @param EntityManager $em
      */
     public function __construct(EntityManager $em)
@@ -30,6 +32,7 @@ class MessageRepository implements MessageRepositoryInterface
 
     /**
      * @param $id
+     *
      * @return null|object|Message
      */
     public function get($id)

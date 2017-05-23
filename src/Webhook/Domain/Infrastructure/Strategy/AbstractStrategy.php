@@ -6,18 +6,25 @@ namespace Webhook\Domain\Infrastructure\Strategy;
 
 /**
  * Class AbstractStrategy
+ *
  * @package Webhook\Domain\Infrastructure\Strategy
  */
 abstract class AbstractStrategy implements \Serializable, StrategyInterface
 {
-    const ALIAS = '';
-
     /**
      * @return string
      */
     public function serialize()
     {
-        return json_encode(get_object_vars($this));
+        return json_encode($this->getOptions());
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return get_object_vars($this);
     }
 
     /**
@@ -27,13 +34,19 @@ abstract class AbstractStrategy implements \Serializable, StrategyInterface
     {
         $data = json_decode($serialized);
 
-        foreach ($data as $k => $v) {
-            $this->{$k} = $v;
-        }
+        $this->setOptions($data);
     }
 
     /**
-     * @return array
+     * @param array $options
      */
-    abstract public function getOptions(): array;
+    public function setOptions(array $options)
+    {
+        foreach ($options as $key => $val) {
+            $method = 'set' . $key;
+            if (method_exists($this, $method)) {
+                $this->{$method}($val);
+            }
+        }
+    }
 }

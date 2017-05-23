@@ -6,6 +6,7 @@ namespace Webhook\Domain\Infrastructure\Strategy;
 
 /**
  * Interface SetOptionsInterface
+ *
  * @package Webhook\Domain\Infrastructure\Strategy
  */
 interface SetOptionsInterface

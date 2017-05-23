@@ -1,2 +1,0 @@
-linear: Webhook\Domain\Infrastructure\Strategy\LinearStrategy
-exponential: Webhook\Domain\Infrastructure\Strategy\ExponentialStrategy

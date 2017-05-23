@@ -72,6 +72,7 @@ class Message implements \JsonSerializable
 
     /**
      * Message constructor.
+     *
      * @param string $url
      * @param $body
      */
@@ -92,14 +93,6 @@ class Message implements \JsonSerializable
     {
         $this->strategy = $strategy;
         $this->calculateNextRetry();
-    }
-
-    /**
-     * @return array
-     */
-    public function getOptions()
-    {
-        return $this->strategy->getOptions();
     }
 
     private function calculateNextRetry()
@@ -249,15 +242,12 @@ class Message implements \JsonSerializable
     {
         $result = [];
         foreach (get_object_vars($this) as $k => $v) {
-            if ($v instanceof StrategyInterface) {
-                continue;
-            }
             if ($v instanceof \DateTime) {
                 $v = $v->format('U');
             }
             $result[$k] = $v;
         }
-        $result['strategyOptions'] = $this->getOptions();
+
         return $result;
     }
 
@@ -315,5 +305,13 @@ class Message implements \JsonSerializable
     public function setStatusDetails(string $statusDetails)
     {
         $this->statusDetails = $statusDetails;
+    }
+
+    /**
+     * @return AbstractStrategy|StrategyInterface
+     */
+    public function getStrategy()
+    {
+        return $this->strategy;
     }
 }

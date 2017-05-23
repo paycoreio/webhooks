@@ -6,6 +6,7 @@ namespace Webhook\Bundle;
 
 /**
  * Class Events
+ *
  * @package Webhook\Bundle
  */
 final class Events

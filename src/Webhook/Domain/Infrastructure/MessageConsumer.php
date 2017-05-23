@@ -8,6 +8,7 @@ use Webhook\Domain\Repository\MessageRepositoryInterface;
 
 /**
  * Class MessageConsumer
+ *
  * @package Webhook\Domain\Infrastructure
  */
 final class MessageConsumer
@@ -30,8 +31,7 @@ final class MessageConsumer
         HandlerInterface $handler,
         HandlerInterface $retryHandler,
         MessageRepositoryInterface $repository
-    )
-    {
+    ) {
         $this->handler = $handler;
         $this->retryHandler = $retryHandler;
         $this->repository = $repository;

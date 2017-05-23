@@ -8,8 +8,6 @@ namespace Webhook\Domain\Infrastructure\Strategy;
  */
 final class LinearStrategy extends AbstractStrategy implements SetOptionsInterface
 {
-    const ALIAS = 'linear';
-
     /** @var int */
     protected $interval;
 
@@ -22,26 +20,31 @@ final class LinearStrategy extends AbstractStrategy implements SetOptionsInterfa
      */
     public function __construct(int $interval = 5, int $multiplier = 1)
     {
-        if ($interval < 0 || $multiplier < 0) {
-            throw new \InvalidArgumentException('Interval and multiplier should be positive integers.');
-        }
-        $this->interval = $interval;
-        $this->multiplier = $multiplier;
+        $this->setInterval($interval);
+        $this->setMultiplier($multiplier);
     }
 
     /**
      * @param int $interval
      */
-    public function setInterval(int $interval)
+    public function setInterval($interval)
     {
-        $this->interval = $interval;
+        if (is_int($interval) || (int) $interval < 0) {
+            throw new \InvalidArgumentException('Interval should be positive integer');
+        }
+
+        $this->interval = (int) $interval;
     }
 
     /**
      * @param int $multiplier
      */
-    public function setMultiplier(int $multiplier)
+    public function setMultiplier($multiplier)
     {
+        if (!is_int($multiplier) || $multiplier < 1) {
+            throw new \InvalidArgumentException('Multiplier should be positive integer');
+        }
+
         $this->multiplier = $multiplier;
     }
 
@@ -54,30 +57,5 @@ final class LinearStrategy extends AbstractStrategy implements SetOptionsInterfa
     public function process(int $attempt): int
     {
         return $this->interval * $this->multiplier * $attempt;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOptions(): array
-    {
-        return [
-            'alias' => static::ALIAS,
-            'interval' => $this->interval,
-            'multiplier' => $this->multiplier,
-        ];
-    }
-
-    /**
-     * @param array $options
-     */
-    public function setOptions(array $options)
-    {
-        if (isset($options['interval'])) {
-            $this->interval = $options['interval'];
-        }
-        if (isset($options['multiplier'])) {
-            $this->multiplier = $options['multiplier'];
-        }
     }
 }

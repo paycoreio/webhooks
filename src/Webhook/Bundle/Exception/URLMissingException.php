@@ -7,6 +7,7 @@ namespace Webhook\Bundle\Exception;
 
 /**
  * Class URLMissingException
+ *
  * @package Webhook\Bundle\Exception
  */
 class URLMissingException extends \InvalidArgumentException

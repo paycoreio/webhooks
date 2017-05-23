@@ -6,6 +6,7 @@ namespace Webhook\Bundle\Exception;
 
 /**
  * Class NullURLException
+ *
  * @package Webhook\Bundle\Exception
  */
 class NullURLException extends \InvalidArgumentException

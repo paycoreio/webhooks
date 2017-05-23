@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Webhook\Sdk;
 
-use Webhook\Sdk\Enum\StrategiesEnum;
-
 /**
  * Class RequestMessage
+ *
  * @package Webhook\Sdk
  */
 class RequestMessage implements \JsonSerializable
@@ -18,11 +17,12 @@ class RequestMessage implements \JsonSerializable
     /** @var string */
     private $body;
 
-    /** @var array */
-    private $query;
+    /** @var  array */
+    private $strategy;
 
     /**
      * Message constructor.
+     *
      * @param string $url
      * @param string $body
      */
@@ -30,7 +30,6 @@ class RequestMessage implements \JsonSerializable
     {
         $this->url = $url;
         $this->body = $body;
-        $this->query = [];
     }
 
     /**
@@ -50,69 +49,13 @@ class RequestMessage implements \JsonSerializable
     }
 
     /**
-     * @return array
-     */
-    public function getQuery(): array
-    {
-        return $this->query;
-    }
-
-    /**
      * @param string $strategy
+     * @param array $options
      */
-    public function setStrategy(string $strategy)
+    public function setStrategy(string $strategy, array $options = [])
     {
-        $this->query['strategy'] = $strategy;
-    }
-
-    /**
-     * @param int $interval
-     */
-    public function setInterval(int $interval)
-    {
-        $this->checkIfStrategyExists();
-        $this->query['interval'] = $interval;
-    }
-
-    /**
-     * @param int $multiplier
-     */
-    public function setMultiplier(int $multiplier)
-    {
-        $this->checkIfStrategyIsLinear();
-        $this->query['multiplier'] = $multiplier;
-    }
-
-    /**
-     * @param float $base
-     */
-    public function setBase(float $base)
-    {
-        $this->checkIfStrategyIsExponential();
-        $this->query['base'] = $base;
-    }
-
-    private function checkIfStrategyIsLinear()
-    {
-        $this->checkIfStrategyExists();
-        if ($this->query['strategy'] !== StrategiesEnum::LINEAR) {
-            throw new \InvalidArgumentException('You can set parameter only for linear strategy');
-        }
-    }
-
-    private function checkIfStrategyIsExponential()
-    {
-        $this->checkIfStrategyExists();
-        if ($this->query['strategy'] !== StrategiesEnum::EXPONENTIAL) {
-            throw new \InvalidArgumentException('You can set parameter only for exponential strategy');
-        }
-    }
-
-    private function checkIfStrategyExists()
-    {
-        if (!isset($this->query['strategy'])) {
-            throw new \RuntimeException('Before set any parameter, please provide strategy to the query');
-        }
+        $this->strategy['name'] = $strategy;
+        $this->strategy['options'] = $options;
     }
 
     /**
@@ -121,8 +64,9 @@ class RequestMessage implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'url' => $this->url,
-            'body' => $this->body,
+            'url'      => $this->url,
+            'body'     => $this->body,
+            'strategy' => $this->strategy
         ];
     }
 }
