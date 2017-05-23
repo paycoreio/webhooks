@@ -20,7 +20,7 @@ final class RequestContentValidator
      * @param array $data
      * @return ValidationResult
      */
-    public function isValid(array $data)
+    public function validate(array $data)
     {
         $result = new ValidationResult();
         try {

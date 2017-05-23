@@ -13,10 +13,9 @@ class URLMissingException extends \InvalidArgumentException
 {
     /**
      * URLMissingException constructor.
-     * @param string $message
      */
-    public function __construct($message = 'Message URL is missed')
+    public function __construct()
     {
-        parent::__construct($message);
+        parent::__construct('Message URL is missed');
     }
 }

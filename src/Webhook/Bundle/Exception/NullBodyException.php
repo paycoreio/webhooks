@@ -13,10 +13,9 @@ class NullBodyException extends \InvalidArgumentException
 {
     /**
      * NullBodyException constructor.
-     * @param string $message
      */
-    public function __construct($message = 'Null message body')
+    public function __construct()
     {
-        parent::__construct($message);
+        parent::__construct('Null message body');
     }
 }

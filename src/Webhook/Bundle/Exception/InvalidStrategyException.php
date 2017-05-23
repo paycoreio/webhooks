@@ -14,10 +14,9 @@ class InvalidStrategyException extends \InvalidArgumentException
     /**
      * InvalidStrategyException constructor.
      * @param string $strategy
-     * @param string $message
      */
-    public function __construct(string $strategy, string $message = 'Invalid strategy passed, %s given')
+    public function __construct(string $strategy)
     {
-        parent::__construct(sprintf($message, $strategy));
+        parent::__construct(sprintf('Invalid strategy passed, %s given', $strategy));
     }
 }

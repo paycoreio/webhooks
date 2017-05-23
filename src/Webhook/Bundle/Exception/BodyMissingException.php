@@ -12,10 +12,9 @@ class BodyMissingException extends \InvalidArgumentException
 {
     /**
      * BodyMissingException constructor.
-     * @param string $message
      */
-    public function __construct($message = 'Message body is missed')
+    public function __construct()
     {
-        parent::__construct($message);
+        parent::__construct('Message body is missed');
     }
 }

@@ -12,10 +12,9 @@ class NullURLException extends \InvalidArgumentException
 {
     /**
      * NullURLException constructor.
-     * @param string $message
      */
-    public function __construct($message = 'Message URL is null')
+    public function __construct()
     {
-        parent::__construct($message);
+        parent::__construct('Message URL is null');
     }
 }

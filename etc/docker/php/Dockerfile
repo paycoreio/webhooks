@@ -10,6 +10,9 @@ RUN apt-get update  && apt-get install -y --no-install-recommends \
 
 RUN rm -rf /var/lib/apt/lists/*
 
+#RUN sudo apt-get install php7.0-cgi
+#RUN sudo ln -s /usr/lib/cgi-bin/php /usr/bin/php7.0-cgi
+
 #Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer --version
@@ -18,6 +21,8 @@ RUN composer --version
 RUN rm /etc/localtime
 RUN ln -s /usr/share/zoneinfo/Europe/Kiev /etc/localtime
 RUN "date"
+
+RUN docker-php-ext-install pcntl
 
 #Install pgsql php extension
 RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \

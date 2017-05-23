@@ -12,6 +12,18 @@ services:
           app_net:
             ipv4_address: 10.5.0.6
 
+    nginx:
+        build:
+            dockerfile: Dockerfile
+            context: etc/docker/nginx
+        ports:
+            - "8088:8080"
+        links:
+            - php
+        networks:
+          app_net:
+            ipv4_address: 10.5.0.9
+
     rabbit:
         image: dzubchik/rabbitmq
         ports:
@@ -26,7 +38,7 @@ services:
             dockerfile: etc/docker/php/Dockerfile
             context: .
         ports:
-           - "9001:8080"
+           - "9000:9000"
         volumes:
             - .:/app
         links:
@@ -36,7 +48,6 @@ services:
         networks:
           app_net:
             ipv4_address: 10.5.0.8
-
 networks:
   app_net:
     driver: bridge

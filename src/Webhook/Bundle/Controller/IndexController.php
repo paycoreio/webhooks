@@ -36,7 +36,7 @@ class IndexController extends Controller
         }
 
         $validator = $this->get('request.content.validator');
-        $result = $validator->isValid($data);
+        $result = $validator->validate($data);
 
         if (!$result->isValid) {
             return new JsonResponse(['error' => $result->errorMessage], 400);

@@ -13,10 +13,9 @@ class NotURLException extends \InvalidArgumentException
     /**
      * NotUrlException constructor.
      * @param string $providedUrl
-     * @param string $message
      */
-    public function __construct(string $providedUrl, $message = 'Not URL was passed to message, % given')
+    public function __construct(string $providedUrl)
     {
-        parent::__construct(sprintf($message, $providedUrl));
+        parent::__construct(sprintf('Not URL was passed to message, % given', $providedUrl));
     }
 }
