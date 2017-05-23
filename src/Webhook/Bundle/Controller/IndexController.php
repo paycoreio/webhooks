@@ -31,7 +31,6 @@ class IndexController extends Controller
     public function indexAction(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-        $parametersBag = new StrategyParameterBag($request->query);
         if (empty($data) || json_last_error() !== JSON_ERROR_NONE) {
             return new JsonResponse(['error' => 'Malformed json provided.'], 400);
         }
@@ -43,7 +42,8 @@ class IndexController extends Controller
             return new JsonResponse(['error' => $result->errorMessage], 400);
         }
 
-        $event = new MessageFromApiSentEvent($data, $parametersBag->getDto());
+        $bag = new StrategyParameterBag($request->query);
+        $event = new MessageFromApiSentEvent($data, $bag);
         $this->get('event_dispatcher')->dispatch(Events::MESSAGE_FROM_API_SENT_EVENT, $event);
         $message = $event->getMessage();
 

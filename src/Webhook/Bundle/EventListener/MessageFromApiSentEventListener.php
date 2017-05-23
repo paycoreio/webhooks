@@ -9,6 +9,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Webhook\Bundle\Event\MessageFromApiSentEvent;
 use Webhook\Bundle\Events;
 use Webhook\Bundle\Repository\MessageRepository;
+use Webhook\Bundle\Service\StrategiesMapper;
 use Webhook\Bundle\Service\StrategyFactory;
 use Webhook\Domain\Model\Message;
 
@@ -28,21 +29,23 @@ class MessageFromApiSentEventListener implements EventSubscriberInterface
         ];
     }
 
-    /** @var StrategyFactory */
-    private $factory;
-
     /** @var MessageRepository */
     private $repository;
 
+    /** @var StrategiesMapper */
+    private $mapper;
+
     /**
      * MessageFromApiSentEventListener constructor.
-     * @param StrategyFactory $factory
      * @param MessageRepository $repository
+     * @param StrategiesMapper $strategiesMapper
      */
-    public function __construct(StrategyFactory $factory, MessageRepository $repository)
+    public function __construct(
+        MessageRepository $repository,
+        StrategiesMapper $strategiesMapper)
     {
-        $this->factory = $factory;
         $this->repository = $repository;
+        $this->mapper = $strategiesMapper;
     }
 
     /**
@@ -51,10 +54,11 @@ class MessageFromApiSentEventListener implements EventSubscriberInterface
     public function handle(MessageFromApiSentEvent $event)
     {
         $data = $event->getData();
-        /** @var StrategyFactory $factory */
-        $factory = $this->factory;
         $message = new Message($data['url'], $data['body']);
-        $message->setStrategy($factory->createStrategy($event->getDto()));
+        $bag = $event->getBag();
+        $strategy = $this->mapper->getStrategyInstance($bag->getStrategyAlias());
+        $strategy->setOptions($bag->getOptions());
+        $message->setStrategy($strategy);
         $this->repository->save($message);
         $event->setMessage($message);
     }

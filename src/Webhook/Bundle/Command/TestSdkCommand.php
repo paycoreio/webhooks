@@ -34,10 +34,9 @@ class TestSdkCommand extends ContainerAwareCommand
             'base_uri' => 'http://localhost:8080/app_dev.php',
         ]);
         $requestMessage = new RequestMessage('http://httpbin.org/post', 'test message');
-        $requestMessage->setStrategy(StrategiesEnum::LINEAR);
+        $requestMessage->setStrategy(StrategiesEnum::EXPONENTIAL);
         $requestMessage->setInterval(200);
-        $requestMessage->setMultiplier(8);
+        $requestMessage->setBase(2);
         $sdkClient->send($requestMessage);
-        $sdkClient->getMessage('15a0c152-966b-4461-9044-b7aa5c643ac7');
     }
 }

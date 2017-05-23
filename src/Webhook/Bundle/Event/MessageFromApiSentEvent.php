@@ -6,7 +6,7 @@ namespace Webhook\Bundle\Event;
 
 
 use Symfony\Component\EventDispatcher\Event;
-use Webhook\Bundle\Controller\ParameterBag\Dto\AbstractStrategyParameterDto;
+use Webhook\Bundle\Controller\ParameterBag\StrategyParameterBag;
 use Webhook\Domain\Model\Message;
 
 /**
@@ -21,18 +21,20 @@ final class MessageFromApiSentEvent extends Event
     /** @var array */
     private $data;
 
-    /** @var AbstractStrategyParameterDto */
-    private $dto;
+    /** @var StrategyParameterBag */
+    private $bag;
 
     /**
      * MessageFromApiSentEvent constructor.
      * @param array $data
-     * @param AbstractStrategyParameterDto $dto
+     * @param StrategyParameterBag $bag
+     * @internal param array $query
+     * @internal param AbstractStrategyParameterDto $dto
      */
-    public function __construct(array $data, AbstractStrategyParameterDto $dto = null)
+    public function __construct(array $data, StrategyParameterBag $bag)
     {
         $this->data = $data;
-        $this->dto = $dto;
+        $this->bag = $bag;
     }
 
     /**
@@ -60,10 +62,10 @@ final class MessageFromApiSentEvent extends Event
     }
 
     /**
-     * @return AbstractStrategyParameterDto
+     * @return StrategyParameterBag
      */
-    public function getDto(): ?AbstractStrategyParameterDto
+    public function getBag(): StrategyParameterBag
     {
-        return $this->dto;
+        return $this->bag;
     }
 }

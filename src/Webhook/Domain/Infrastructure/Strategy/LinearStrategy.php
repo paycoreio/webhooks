@@ -6,7 +6,7 @@ namespace Webhook\Domain\Infrastructure\Strategy;
 /**
  * Class LinearStrategy.
  */
-final class LinearStrategy extends AbstractStrategy
+final class LinearStrategy extends AbstractStrategy implements SetOptionsInterface
 {
     const ALIAS = 'linear';
 
@@ -66,5 +66,18 @@ final class LinearStrategy extends AbstractStrategy
             'interval' => $this->interval,
             'multiplier' => $this->multiplier,
         ];
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptions(array $options)
+    {
+        if (isset($options['interval'])) {
+            $this->interval = $options['interval'];
+        }
+        if (isset($options['multiplier'])) {
+            $this->multiplier = $options['multiplier'];
+        }
     }
 }

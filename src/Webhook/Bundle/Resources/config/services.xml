@@ -13,8 +13,6 @@
             <argument type="service" id="amqp.client"/>
             <argument>%webhooks.queue%</argument>
         </service>
-
-        <service id="strategy.factory" class="Webhook\Bundle\Service\StrategyFactory"/>
         <service id="request.content.validator" class="Webhook\Bundle\Service\Validation\RequestContentValidator"/>
 
         <service id="amqp.client" class="Bunny\Client">
@@ -42,9 +40,13 @@
 
         <service id="message.form.api.sent.event.listener"
                  class="Webhook\Bundle\EventListener\MessageFromApiSentEventListener">
-            <argument type="service" id="strategy.factory"/>
             <argument type="service" id="message.repository"/>
+            <argument type="service" id="strategies.mapper"/>
             <tag name="kernel.event_subscriber" event="message.from.api.sent.event" method="handle"/>
+        </service>
+
+        <service id="strategies.mapper" class="Webhook\Bundle\Service\StrategiesMapper">
+            <argument>%strategies%</argument>
         </service>
     </services>
 </container>

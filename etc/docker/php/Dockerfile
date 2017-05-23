@@ -23,9 +23,6 @@ RUN "date"
 RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo pdo_pgsql pgsql
 
-#Install amqp extension
-RUN pecl install amqp
-
 #Install xdebug extension
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug

@@ -7,7 +7,7 @@ namespace Webhook\Domain\Infrastructure\Strategy;
 /**
  * Class ExponentialStrategy.
  */
-final class ExponentialStrategy extends AbstractStrategy
+final class ExponentialStrategy extends AbstractStrategy implements SetOptionsInterface
 {
     const ALIAS = 'exponential';
 
@@ -32,14 +32,12 @@ final class ExponentialStrategy extends AbstractStrategy
     }
 
     /**
-     *
      * @param int $attempt
-     *
      * @return int
      */
     public function process(int $attempt): int
     {
-        return (int)ceil($this->interval + pow($this->base, $attempt));
+        return (int)ceil($this->interval + ($this->base ** $attempt));
     }
 
     /**
@@ -52,5 +50,18 @@ final class ExponentialStrategy extends AbstractStrategy
             'interval' => $this->interval,
             'base' => $this->base,
         ];
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptions(array $options)
+    {
+        if (isset($options['interval'])) {
+            $this->interval = (int)$options['interval'];
+        }
+        if (isset($options['base'])) {
+            $this->base = (float)$options['base'];
+        }
     }
 }
