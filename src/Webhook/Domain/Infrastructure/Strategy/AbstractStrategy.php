@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Webhook\Domain\Infrastructure\Strategy;
@@ -9,8 +10,13 @@ namespace Webhook\Domain\Infrastructure\Strategy;
  *
  * @package Webhook\Domain\Infrastructure\Strategy
  */
-abstract class AbstractStrategy implements \Serializable, StrategyInterface
+abstract class AbstractStrategy implements \Serializable, \JsonSerializable, StrategyInterface
 {
+    public function jsonSerialize()
+    {
+        return $this->getOptions() + ['name' => StrategyRegistry::getName($this)];
+    }
+
     /**
      * @return string
      */
@@ -32,7 +38,7 @@ abstract class AbstractStrategy implements \Serializable, StrategyInterface
      */
     public function unSerialize($serialized)
     {
-        $data = json_decode($serialized);
+        $data = json_decode($serialized, true);
 
         $this->setOptions($data);
     }
@@ -43,8 +49,8 @@ abstract class AbstractStrategy implements \Serializable, StrategyInterface
     public function setOptions(array $options)
     {
         foreach ($options as $key => $val) {
-            $method = 'set' . $key;
-            if (method_exists($this, $method)) {
+            $method = 'set' . ucfirst($key);
+            if ($method !== __FUNCTION__ && method_exists($this, $method)) {
                 $this->{$method}($val);
             }
         }

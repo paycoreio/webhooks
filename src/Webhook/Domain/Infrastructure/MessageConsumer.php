@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Webhook\Domain\Infrastructure;
@@ -58,8 +59,9 @@ final class MessageConsumer
                 $this->retryHandler->handle($message);
                 $message->retry();
             } else {
-                $message->setStatus(Message::STATUS_DONE);
+                $message->done();
             }
+
             $this->repository->update($message);
         }
     }

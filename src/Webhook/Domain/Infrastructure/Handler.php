@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Webhook\Domain\Infrastructure;
@@ -42,7 +43,7 @@ final class Handler implements HandlerInterface
             }
 
             if ($message->getExpectedContent() !== null
-                && strpos($response->getBody(), $message->getExpectedContent()) === false
+                && strpos($response->getBody()->getContents(), $message->getExpectedContent()) === false
             ) {
                 return RequestResult::contentMissMatch();
             }

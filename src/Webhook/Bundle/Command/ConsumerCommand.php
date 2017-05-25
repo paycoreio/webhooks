@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Webhook\Bundle\Command;
@@ -40,7 +41,7 @@ class ConsumerCommand extends ContainerAwareCommand
             ['x-delayed-type' => 'direct']
         );
 
-        $queue = $channel->queueDeclare($queueName, false, false, true, false);
+        $queue = $channel->queueDeclare($queueName, false, true, false, false);
         $channel->queueBind($queue->queue, $queueName);
 
         $consumer = $this->getContainer()->get('webhooks.consumer');

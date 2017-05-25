@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Webhook\Domain\Infrastructure\Strategy;
@@ -30,7 +31,7 @@ final class ExponentialStrategy extends AbstractStrategy
      */
     public function setInterval($interval)
     {
-        if (is_int($interval) || (int) $interval < 0) {
+        if (!is_int($interval) || (int) $interval < 0) {
             throw new \InvalidArgumentException('Interval should be positive integer');
         }
 
@@ -42,7 +43,7 @@ final class ExponentialStrategy extends AbstractStrategy
      */
     public function setBase($base)
     {
-        if (!is_float($base) || (float) $base < 0) {
+        if (!is_numeric($base) || (float) $base < 0) {
             throw new \InvalidArgumentException('Base should be positive float');
         }
 

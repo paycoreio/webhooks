@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Webhook\Domain\Model;
@@ -41,7 +42,7 @@ class Message implements \JsonSerializable
     /**
      * Time at what message was processed to final state OK|FAIL
      *
-     * @var \DateTime
+     * @var \DateTime|null
      */
     private $processed;
     /**
@@ -86,13 +87,17 @@ class Message implements \JsonSerializable
         $this->setStrategy(new LinearStrategy(60));
     }
 
-    /**
-     * @param StrategyInterface $strategy
-     */
-    public function setStrategy(StrategyInterface $strategy)
+    public function retry()
     {
-        $this->strategy = $strategy;
+        $this->attempt++;
         $this->calculateNextRetry();
+
+        if ($this->attempt === $this->maxAttempts) {
+            $this->status = self::STATUS_FAILED;
+            $this->processed();
+        } else {
+            $this->status = self::STATUS_QUEUED;
+        }
     }
 
     private function calculateNextRetry()
@@ -110,18 +115,6 @@ class Message implements \JsonSerializable
     private function setNextAttempt(\DateTime $nextAttempt)
     {
         $this->nextAttempt = $nextAttempt;
-    }
-
-    public function retry()
-    {
-        $this->attempt++;
-        $this->calculateNextRetry();
-
-        if ($this->attempt === $this->maxAttempts) {
-            $this->status = self::STATUS_FAILED;
-        } else {
-            $this->status = self::STATUS_QUEUED;
-        }
     }
 
     /**
@@ -230,11 +223,6 @@ class Message implements \JsonSerializable
         $this->processed();
     }
 
-    private function processed()
-    {
-        $this->processed = new \DateTime();
-    }
-
     /**
      * @return array
      */
@@ -245,6 +233,7 @@ class Message implements \JsonSerializable
             if ($v instanceof \DateTime) {
                 $v = $v->format('U');
             }
+
             $result[$k] = $v;
         }
 
@@ -313,5 +302,19 @@ class Message implements \JsonSerializable
     public function getStrategy()
     {
         return $this->strategy;
+    }
+
+    /**
+     * @param StrategyInterface $strategy
+     */
+    public function setStrategy(StrategyInterface $strategy)
+    {
+        $this->strategy = $strategy;
+        $this->calculateNextRetry();
+    }
+
+    private function processed()
+    {
+        $this->processed = new \DateTime();
     }
 }

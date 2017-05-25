@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Webhook\Bundle\Controller;
@@ -9,11 +10,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\Optional;
 use Symfony\Component\Validator\Constraints\Required;
 use Symfony\Component\Validator\Constraints\Url;
 use Symfony\Component\Validator\Validation;
+use Webhook\Domain\Infrastructure\Strategy\StrategyFactory;
+use Webhook\Domain\Infrastructure\Strategy\StrategyRegistry;
 use Webhook\Domain\Model\Message;
 
 
@@ -38,32 +45,66 @@ class IndexController extends Controller
             return new JsonResponse(['error' => 'Malformed json provided.'], 400);
         }
 
-        $strategies = $this->getParameter('strategies.map');
+        $strategiesMap = StrategyRegistry::getMap();
+        $strategies = array_keys($strategiesMap);
+
         $constraints = new Collection([
             'fields' => [
                 'body'     => new Required(),
                 'url'      => new Url(),
-                'strategy' => new Choice(['choices' => array_keys($strategies), 'strict' => true]),
+                'strategy' => new Optional(
+                    new Collection(
+                        [
+                            'fields' => [
+                                'name'    => new Required(new Choice(['choices' => $strategies, 'strict' => true])),
+                                'options' => new Optional(new All(new Length(['min' => 1]))),
+                            ]
+                        ])
+                ),
                 'raw'      => new Choice(['choices' => [true, false], 'strict' => true])
             ]
         ]);
 
-        $validator = Validation::createValidator();
-        $result = $validator->validate($data, $constraints);
+        $resolver = new OptionsResolver();
 
-        if (0 !== $result->count()) {
-            dump($result);
-            return new JsonResponse(['errors' => ''], 400);
+        try {
+            $resolver->setDefaults(array(
+                'strategy' => null,
+                'raw'      => true,
+            ))->setDefined(['body', 'url']);
+
+
+            $data = $resolver->resolve($data);
+        } catch (\Throwable $exception) {
+            return new JsonResponse(['error' => 'Bad request parameters'], 400);
         }
 
-        // build message
+
+        $validator = Validation::createValidator();
+        $violations = $validator->validate($data, $constraints);
+
+        if (0 !== $violations->count()) {
+            $errors = [];
+            foreach ($violations as $violation) {
+                $field = preg_replace('/\[|\]/', '', $violation->getPropertyPath());
+                $error = $violation->getMessage();
+                $errors[$field] = $error;
+            }
+
+            return new JsonResponse(['errors' => $errors], 400);
+        }
+
         $message = new Message($data['url'], $data['body']);
 
         if (null !== $data['strategy']) {
-            $className = $data['strategy'];
-            $strategy = new $className;
+            $name = $data['strategy']['name'];
+            $options = $data['strategy']['options'] ?? [];
+
+            $strategy = StrategyFactory::create($name, $options);
             $message->setStrategy($strategy);
         }
+
+        $this->get('message.repository')->save($message);
 
         $this->get('amqp.producer')->publish($message);
         return new JsonResponse(['data' => $message], Response::HTTP_CREATED);
