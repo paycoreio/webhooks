@@ -31,10 +31,13 @@ class TestSdkCommand extends ContainerAwareCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $sdkClient = new Client([
-            'base_uri' => 'http://localhost:8080/app_dev.php',
+            'base_uri' => 'http://localhost',
         ]);
         $requestMessage = new RequestMessage('http://httpbin.org/post', 'test message');
         $requestMessage->setStrategy('exponential');
+        $requestMessage->setExpectedContent('test');
+        $requestMessage->setUserAgent('firefox');
+
         $sdkClient->send($requestMessage);
     }
 }

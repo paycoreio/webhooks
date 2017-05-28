@@ -71,6 +71,9 @@ class Message implements \JsonSerializable
     /** @var  string */
     private $statusDetails;
 
+    /** @var  array */
+    private $metadata = [];
+
     /**
      * Message constructor.
      *
@@ -316,5 +319,21 @@ class Message implements \JsonSerializable
     private function processed()
     {
         $this->processed = new \DateTime();
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetadata(): array
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * @param array $metadata
+     */
+    public function setMetadata(array $metadata)
+    {
+        $this->metadata = $metadata;
     }
 }

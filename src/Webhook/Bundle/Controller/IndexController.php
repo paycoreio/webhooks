@@ -10,12 +10,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Optional;
+use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Required;
 use Symfony\Component\Validator\Constraints\Url;
 use Symfony\Component\Validator\Validation;
@@ -45,43 +46,22 @@ class IndexController extends Controller
             return new JsonResponse(['error' => 'Malformed json provided.'], 400);
         }
 
-        $strategiesMap = StrategyRegistry::getMap();
-        $strategies = array_keys($strategiesMap);
-
-        $constraints = new Collection([
-            'fields' => [
-                'body'     => new Required(),
-                'url'      => new Url(),
-                'strategy' => new Optional(
-                    new Collection(
-                        [
-                            'fields' => [
-                                'name'    => new Required(new Choice(['choices' => $strategies, 'strict' => true])),
-                                'options' => new Optional(new All(new Length(['min' => 1]))),
-                            ]
-                        ])
-                ),
-                'raw'      => new Choice(['choices' => [true, false], 'strict' => true])
-            ]
-        ]);
-
-        $resolver = new OptionsResolver();
-
-        try {
-            $resolver->setDefaults(array(
-                'strategy' => null,
-                'raw'      => true,
-            ))->setDefined(['body', 'url']);
-
-
-            $data = $resolver->resolve($data);
-        } catch (\Throwable $exception) {
-            return new JsonResponse(['error' => 'Bad request parameters'], 400);
+        if (true !== $response = $this->validate($data)) {
+            return $response;
         }
 
+        $message = $this->buildMessage($data);
 
+        $this->get('message.repository')->save($message);
+        $this->get('amqp.producer')->publish($message);
+
+        return new JsonResponse($message, Response::HTTP_CREATED);
+    }
+
+    private function validate(array $data)
+    {
         $validator = Validation::createValidator();
-        $violations = $validator->validate($data, $constraints);
+        $violations = $validator->validate($data, $this->getConstraints());
 
         if (0 !== $violations->count()) {
             $errors = [];
@@ -94,20 +74,35 @@ class IndexController extends Controller
             return new JsonResponse(['errors' => $errors], 400);
         }
 
-        $message = new Message($data['url'], $data['body']);
+        return true;
+    }
 
-        if (null !== $data['strategy']) {
-            $name = $data['strategy']['name'];
-            $options = $data['strategy']['options'] ?? [];
+    private function getConstraints()
+    {
+        $strategiesMap = StrategyRegistry::getMap();
+        $strategies = array_keys($strategiesMap);
 
-            $strategy = StrategyFactory::create($name, $options);
-            $message->setStrategy($strategy);
-        }
-
-        $this->get('message.repository')->save($message);
-
-        $this->get('amqp.producer')->publish($message);
-        return new JsonResponse(['data' => $message], Response::HTTP_CREATED);
+        return new Collection([
+            'fields' => [
+                'body'            => new Required(),
+                'url'             => new Url(),
+                'strategy'        => new Optional(
+                    new Collection(
+                        [
+                            'fields' => [
+                                'name'    => new Required(new Choice(['choices' => $strategies, 'strict' => true])),
+                                'options' => new Optional(new All(new Length(['min' => 1]))),
+                            ]
+                        ])
+                ),
+                'raw'             => new Optional(new Choice(['choices' => [true, false], 'strict' => true])),
+                'maxAttempts'     => new Optional(new Range(['min' => 1, 'max' => 100])),
+                'expectedCode'    => new Optional(new Range(['min' => 200, 'max' => 515])),
+                'expectedContent' => new Optional(new Length(['min' => 1, 'max' => 128])),
+                'userAgent'       => new Optional(new Length(['min' => 1, 'max' => 128])),
+                'metadata'        => new Optional(new All(new Length(['min' => 1, 'max' => 128]))),
+            ]
+        ]);
     }
 
     /**
@@ -125,5 +120,36 @@ class IndexController extends Controller
         }
 
         return new JsonResponse($message);
+    }
+
+    /**
+     * @param $data
+     *
+     * @return Message
+     */
+    private function buildMessage($data): Message
+    {
+        $message = new Message($data['url'], $data['body']);
+
+        unset($data['url'], $data['body']);
+
+        if (null !== $data['strategy']) {
+            $name = $data['strategy']['name'];
+            $options = $data['strategy']['options'] ?? [];
+
+            $data['strategy'] = StrategyFactory::create($name, $options);
+        }
+
+        $accessor = new PropertyAccessor();
+        foreach ($data as $k => $v) {
+            if (null === $v || '' === $v) {
+                continue;
+            }
+
+            if ($accessor->isWritable($message, $k)) {
+                $accessor->setValue($message, $k, $v);
+            }
+        }
+        return $message;
     }
 }

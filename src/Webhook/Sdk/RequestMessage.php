@@ -20,6 +20,21 @@ class RequestMessage implements \JsonSerializable
     /** @var  array */
     private $strategy;
 
+    /** @var  int */
+    private $maxAttempts;
+
+    /** @var  int */
+    private $expectedCode;
+
+    /** @var  string */
+    private $expectedContent;
+
+    /** @var  string */
+    private $userAgent;
+
+    /** @var  array */
+    private $metadata;
+
     /**
      * Message constructor.
      *
@@ -63,10 +78,46 @@ class RequestMessage implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return [
-            'url'      => $this->url,
-            'body'     => $this->body,
-            'strategy' => $this->strategy
-        ];
+        return get_object_vars($this);
+    }
+
+    /**
+     * @param int $maxAttempts
+     */
+    public function setMaxAttempts(int $maxAttempts)
+    {
+        $this->maxAttempts = $maxAttempts;
+    }
+
+    /**
+     * @param int $expectedCode
+     */
+    public function setExpectedCode(int $expectedCode)
+    {
+        $this->expectedCode = $expectedCode;
+    }
+
+    /**
+     * @param string $expectedContent
+     */
+    public function setExpectedContent(string $expectedContent)
+    {
+        $this->expectedContent = $expectedContent;
+    }
+
+    /**
+     * @param string $userAgent
+     */
+    public function setUserAgent(string $userAgent)
+    {
+        $this->userAgent = $userAgent;
+    }
+
+    /**
+     * @param array $metadata
+     */
+    public function setMetadata(array $metadata)
+    {
+        $this->metadata = $metadata;
     }
 }

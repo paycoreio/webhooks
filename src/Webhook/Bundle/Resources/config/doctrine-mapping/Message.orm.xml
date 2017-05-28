@@ -20,5 +20,6 @@
         <field name="raw" type="boolean"/>
         <field name="status" type="string"/>
         <field name="statusDetails" type="string" nullable="true"/>
+        <field name="metadata" type="json_array" nullable="true"/>
     </entity>
 </doctrine-mapping>
