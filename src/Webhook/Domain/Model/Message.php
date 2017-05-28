@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Webhook\Domain\Model;
 
 use Ramsey\Uuid\Uuid;
+use Webhook\Domain\Infrastructure\Strategy\AbstractStrategy;
 use Webhook\Domain\Infrastructure\Strategy\LinearStrategy;
 use Webhook\Domain\Infrastructure\Strategy\StrategyInterface;
 
@@ -40,7 +42,7 @@ class Message implements \JsonSerializable
     /**
      * Time at what message was processed to final state OK|FAIL
      *
-     * @var \DateTime
+     * @var \DateTime|null
      */
     private $processed;
     /**
@@ -63,12 +65,21 @@ class Message implements \JsonSerializable
     /** @var  string */
     private $userAgent;
 
-    /** @var  StrategyInterface */
+    /** @var  StrategyInterface|AbstractStrategy */
     private $strategy;
 
     /** @var  string */
     private $statusDetails;
 
+    /** @var  array */
+    private $metadata = [];
+
+    /**
+     * Message constructor.
+     *
+     * @param string $url
+     * @param $body
+     */
     public function __construct(string $url, $body)
     {
         $this->id = Uuid::getFactory()->uuid4()->toString();
@@ -79,10 +90,17 @@ class Message implements \JsonSerializable
         $this->setStrategy(new LinearStrategy(60));
     }
 
-    public function setStrategy(StrategyInterface $strategy)
+    public function retry()
     {
-        $this->strategy = $strategy;
+        $this->attempt++;
         $this->calculateNextRetry();
+
+        if ($this->attempt === $this->maxAttempts) {
+            $this->status = self::STATUS_FAILED;
+            $this->processed();
+        } else {
+            $this->status = self::STATUS_QUEUED;
+        }
     }
 
     private function calculateNextRetry()
@@ -100,18 +118,6 @@ class Message implements \JsonSerializable
     private function setNextAttempt(\DateTime $nextAttempt)
     {
         $this->nextAttempt = $nextAttempt;
-    }
-
-    public function retry()
-    {
-        $this->attempt++;
-        $this->calculateNextRetry();
-
-        if ($this->attempt === $this->maxAttempts) {
-            $this->status = self::STATUS_FAILED;
-        } else {
-            $this->status = self::STATUS_QUEUED;
-        }
     }
 
     /**
@@ -220,11 +226,9 @@ class Message implements \JsonSerializable
         $this->processed();
     }
 
-    private function processed()
-    {
-        $this->processed = new \DateTime();
-    }
-
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
         $result = [];
@@ -293,5 +297,43 @@ class Message implements \JsonSerializable
     public function setStatusDetails(string $statusDetails)
     {
         $this->statusDetails = $statusDetails;
+    }
+
+    /**
+     * @return AbstractStrategy|StrategyInterface
+     */
+    public function getStrategy()
+    {
+        return $this->strategy;
+    }
+
+    /**
+     * @param StrategyInterface $strategy
+     */
+    public function setStrategy(StrategyInterface $strategy)
+    {
+        $this->strategy = $strategy;
+        $this->calculateNextRetry();
+    }
+
+    private function processed()
+    {
+        $this->processed = new \DateTime();
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetadata(): array
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * @param array $metadata
+     */
+    public function setMetadata(array $metadata)
+    {
+        $this->metadata = $metadata;
     }
 }

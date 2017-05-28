@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Webhook\Sdk;
@@ -6,26 +7,48 @@ namespace Webhook\Sdk;
 
 use GuzzleHttp\RequestOptions;
 
+/**
+ * Class Client
+ *
+ * @package Webhook\Sdk
+ */
 class Client
 {
     /** @var \GuzzleHttp\Client */
     protected $client;
 
+    /**
+     * Client constructor.
+     *
+     * @param array $options
+     */
     public function __construct($options = [])
     {
         $this->client = new \GuzzleHttp\Client($options);
     }
 
-    public function send(Message $message)
+    /**
+     * @param RequestMessage $message
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function send(RequestMessage $message)
     {
-        return $this->client->post('/message', [RequestOptions::JSON => json_encode($message)]);
+        $options = [
+            RequestOptions::BODY => json_encode($message),
+        ];
+
+        return $this->client->post('/message', $options);
     }
 
+    /**
+     * @param string $id
+     *
+     * @return ResponseMessage
+     */
     public function getMessage(string $id)
     {
         $response = $this->client->get('/message/' . $id);
-
-        return Message::fromJson($response->getBody()->getContents());
-
+        return ResponseMessage::fromJson($response->getBody()->getContents());
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Webhook\Domain\Infrastructure;
@@ -6,6 +7,11 @@ namespace Webhook\Domain\Infrastructure;
 use Webhook\Domain\Model\Message;
 use Webhook\Domain\Repository\MessageRepositoryInterface;
 
+/**
+ * Class MessageConsumer
+ *
+ * @package Webhook\Domain\Infrastructure
+ */
 final class MessageConsumer
 {
     /** @var HandlerInterface */
@@ -45,7 +51,6 @@ final class MessageConsumer
             if ($message->getStatus() === Message::STATUS_FAILED) {
                 return;
             }
-
             /** @var RequestResult $r */
             $r = $this->handler->handle($message);
             $message->setStatusDetails($r->getDetails());
@@ -54,7 +59,7 @@ final class MessageConsumer
                 $this->retryHandler->handle($message);
                 $message->retry();
             } else {
-                $message->setStatus(Message::STATUS_DONE);
+                $message->done();
             }
 
             $this->repository->update($message);

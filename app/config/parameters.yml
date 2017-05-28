@@ -1,8 +1,0 @@
-# This file is auto-generated during the composer install
-parameters:
-    database_host: 127.0.0.1
-    database_port: 5432
-    database_name: webhooks
-    database_user: webhooks
-    database_password: webhooks
-    secret: ThisTokenIsNotSoSecretChangeIt

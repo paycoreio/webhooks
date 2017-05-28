@@ -8,6 +8,7 @@
         <id name="id"/>
         <field name="attempt" type="integer"/>
         <field name="created" type="datetime"/>
+        <field name="processed" type="datetime" nullable="true"/>
         <field name="expectedCode" type="integer"/>
         <field name="expectedContent" type="string" nullable="true"/>
         <field name="body" type="string"/>
@@ -19,5 +20,6 @@
         <field name="raw" type="boolean"/>
         <field name="status" type="string"/>
         <field name="statusDetails" type="string" nullable="true"/>
+        <field name="metadata" type="json_array" nullable="true"/>
     </entity>
 </doctrine-mapping>

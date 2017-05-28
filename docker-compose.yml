@@ -14,7 +14,16 @@ services:
         ports:
             - "15672:15672"
             - "5672:5672"
-    redis:
-        image: redis
+
+    app:
+        build:
+            dockerfile: etc/docker/php/Dockerfile
+            context: .
         ports:
-            - "6379:6379"
+           - "80:80"
+        volumes:
+            - .:/app
+        links:
+            - rabbit
+            - database
+        working_dir: /app

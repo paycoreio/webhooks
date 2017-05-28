@@ -3,3 +3,6 @@ build
 var/cache
 var/logs
 var/sessions
+/.idea
+/etc/docker/php/ssh/
+/app/config/parameters.yml

@@ -6,6 +6,10 @@
 
     <parameters>
         <parameter type="string" key="webhooks.queue">webhooks</parameter>
+        <parameter type="collection" key="strategies.map">
+            <parameter type="string" key="exponential">Webhook\Domain\Infrastructure\Strategy\ExponentialStrategy</parameter>
+            <parameter type="string" key="linear">Webhook\Domain\Infrastructure\Strategy\LinearStrategy</parameter>
+        </parameter>
     </parameters>
     <services>
         <service id="message.handler" class="Webhook\Domain\Infrastructure\Handler"/>
@@ -14,7 +18,12 @@
             <argument>%webhooks.queue%</argument>
         </service>
 
+
         <service id="amqp.client" class="Bunny\Client">
+            <argument type="collection">
+                <argument type="string" key="host">%rabbitmq_host%</argument>
+                <argument type="string" key="port">%rabbitmq_port%</argument>
+            </argument>
             <call method="connect"/>
         </service>
 
@@ -32,5 +41,6 @@
             <argument type="service" id="message.retry.handler"/>
             <argument type="service" id="message.repository"/>
         </service>
+
     </services>
 </container>

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Webhook\Bundle\Service;
@@ -17,6 +18,12 @@ final class WebhookProducer
      */
     private $queueName;
 
+    /**
+     * WebhookProducer constructor.
+     *
+     * @param Client $client
+     * @param string $queue
+     */
     public function __construct(Client $client, string $queue)
     {
         $this->client = $client;

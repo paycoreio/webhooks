@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 
 namespace Webhook\Domain\Infrastructure\Strategy;
@@ -6,13 +7,13 @@ namespace Webhook\Domain\Infrastructure\Strategy;
 /**
  * Class LinearStrategy.
  */
-final class LinearStrategy extends AbstractStrategy
+final class LinearStrategy extends AbstractStrategy implements SetOptionsInterface
 {
     /** @var int */
     protected $interval;
 
     /** @var int */
-    protected  $multiplier;
+    protected $multiplier;
 
     /**
      * @param int $interval
@@ -20,10 +21,31 @@ final class LinearStrategy extends AbstractStrategy
      */
     public function __construct(int $interval = 5, int $multiplier = 1)
     {
-        if ($interval < 0 || $multiplier < 0) {
-            throw new \InvalidArgumentException('Interval and multiplier should be positive integers.');
+        $this->setInterval($interval);
+        $this->setMultiplier($multiplier);
+    }
+
+    /**
+     * @param int $interval
+     */
+    public function setInterval($interval)
+    {
+        if (!is_int($interval) || (int) $interval < 0) {
+            throw new \InvalidArgumentException('Interval should be positive integer');
         }
-        $this->interval = $interval;
+
+        $this->interval = (int) $interval;
+    }
+
+    /**
+     * @param int $multiplier
+     */
+    public function setMultiplier($multiplier)
+    {
+        if (!is_int($multiplier) || $multiplier < 1) {
+            throw new \InvalidArgumentException('Multiplier should be positive integer');
+        }
+
         $this->multiplier = $multiplier;
     }
 
