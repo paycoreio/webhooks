@@ -4,46 +4,51 @@ declare(strict_types=1);
 
 namespace Webhook\Domain\Infrastructure;
 
-use GuzzleHttp\Psr7\Request;
-use Http\Client\Exception\TransferException;
-use Http\Discovery\HttpClientDiscovery;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\TransferException;
+use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
-use Webhook\Domain\Model\Message;
+use Webhook\Domain\Model\Webhook;
 
 final class Handler implements HandlerInterface
 {
-    /** @var \Http\Client\HttpClient */
-    protected $httpClient;
-
     /** @var  string */
     protected $defaultClient = 'Webhook-Client';
 
-    public function __construct()
+    /** @var Client|null */
+    protected $client;
+
+    public function __construct($client = null)
     {
-        $this->httpClient = HttpClientDiscovery::find();
+        if (null === $client) {
+            $client = new Client([
+                RequestOptions::TIMEOUT => 10,
+                RequestOptions::ALLOW_REDIRECTS => false,
+            ]);
+        }
+
+        $this->client = $client;
     }
 
     /**
-     * @param Message $message
+     * @param Webhook $webhook
      *
      * @return RequestResult
      */
-    public function handle(Message $message)
+    public function handle(Webhook $webhook)
     {
-        $request = $this->createRequest($message);
-
         $result = RequestResult::success();
 
         try {
             /** @var ResponseInterface $response */
-            $response = $this->httpClient->sendRequest($request);
+            $response = $this->client->post($webhook->getUrl(), $this->createOptions($webhook));
 
-            if ($response->getStatusCode() !== $message->getExpectedCode()) {
+            if ($response->getStatusCode() !== $webhook->getExpectedCode()) {
                 return RequestResult::codeMissMatch($response->getStatusCode());
             }
 
-            if ($message->getExpectedContent() !== null
-                && strpos($response->getBody()->getContents(), $message->getExpectedContent()) === false
+            if ($webhook->getExpectedContent() !== null
+                && strpos($response->getBody()->getContents(), $webhook->getExpectedContent()) === false
             ) {
                 return RequestResult::contentMissMatch();
             }
@@ -56,25 +61,29 @@ final class Handler implements HandlerInterface
     }
 
     /**
-     * @param Message $message
+     * @param Webhook $webhook
      *
-     * @return Request
+     * @return array
      */
-    private function createRequest(Message $message)
+    private function createOptions(Webhook $webhook): array
     {
+        $options = [];
+
         $headers = [
-            'Next-Retry'  => $message->getNextAttempt()->format('U'),
-            'Retry-Count' => $message->getAttempt(),
-            'User-Agent'  => $message->getUserAgent() ? $message->getUserAgent() : $this->defaultClient
+            'Next-Retry'  => $webhook->getNextAttempt()->format('U'),
+            'Retry-Count' => $webhook->getAttempt(),
+            'User-Agent'  => $webhook->getUserAgent() ? $webhook->getUserAgent() : $this->defaultClient
         ];
 
-        if ($message->isRaw()) { // send json
+        if ($webhook->isRaw()) {
             $headers['Content-Type'] = 'application/json';
-            $body = json_encode($message->getBody());
+            $options[RequestOptions::BODY] = $webhook->getBody();
         } else {
-            $body = http_build_query($message->getBody());
+            $options[RequestOptions::FORM_PARAMS] = json_decode($webhook->getBody(), true);
         }
 
-        return new Request('POST', $message->getUrl(), $headers, $body);
+        $options[RequestOptions::HEADERS] = $headers;
+
+        return $options;
     }
 }

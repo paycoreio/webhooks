@@ -6,15 +6,15 @@ namespace Webhook\Bundle\Repository;
 
 
 use Doctrine\ORM\EntityManager;
-use Webhook\Domain\Model\Message;
-use Webhook\Domain\Repository\MessageRepositoryInterface;
+use Webhook\Domain\Model\Webhook;
+use Webhook\Domain\Repository\WebhookRepositoryInterface;
 
 /**
  * Class MessageRepository
  *
  * @package Webhook\Bundle\Repository
  */
-class MessageRepository implements MessageRepositoryInterface
+class WebhookRepository implements WebhookRepositoryInterface
 {
     /**
      * @var EntityManager
@@ -34,27 +34,27 @@ class MessageRepository implements MessageRepositoryInterface
     /**
      * @param $id
      *
-     * @return null|object|Message
+     * @return null|object|Webhook
      */
     public function get($id)
     {
-        return $this->em->find(Message::class, $id);
+        return $this->em->find(Webhook::class, $id);
     }
 
     /**
-     * @param Message $message
+     * @param Webhook $webhook
      */
-    public function update(Message $message)
+    public function update(Webhook $webhook)
     {
-        $this->save($message);
+        $this->save($webhook);
     }
 
     /**
-     * @param Message $message
+     * @param Webhook $webhook
      */
-    public function save(Message $message)
+    public function save(Webhook $webhook)
     {
-        $this->em->persist($message);
+        $this->em->persist($webhook);
         $this->em->flush();
     }
 
@@ -63,7 +63,7 @@ class MessageRepository implements MessageRepositoryInterface
      */
     public function clearOutdated(\DateTime $time)
     {
-        $this->em->createQuery('DELETE FROM Webhook\Domain\Model\Message m where m.created  < :time')
+        $this->em->createQuery('DELETE FROM Webhook\Domain\Model\Webhook m where m.created  < :time')
             ->setParameter('time', $time->format(\DATE_RFC822))->execute();
     }
 }

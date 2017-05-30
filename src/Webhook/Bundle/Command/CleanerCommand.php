@@ -20,7 +20,7 @@ class CleanerCommand extends ContainerAwareCommand
     {
         // TODO: get as parameter
         $dateTime = new \DateTime(); // get as parameter
-        $this->getContainer()->get('message.repository')->clearOutdated($dateTime);
+        $this->getContainer()->get('webhook.repository')->clearOutdated($dateTime);
     }
 
 }

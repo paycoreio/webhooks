@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Webhook\Bundle\Service;
 
 use Bunny\Client;
-use Webhook\Domain\Model\Message;
+use Webhook\Domain\Model\Webhook;
 
 final class WebhookProducer
 {
@@ -31,9 +31,9 @@ final class WebhookProducer
     }
 
     /**
-     * @param Message $message
+     * @param Webhook $message
      */
-    public function publish(Message $message)
+    public function publish(Webhook $message)
     {
         $id = $message->getId();
         $channel = $this->client->channel();

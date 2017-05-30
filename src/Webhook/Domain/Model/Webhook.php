@@ -9,7 +9,7 @@ use Webhook\Domain\Infrastructure\Strategy\AbstractStrategy;
 use Webhook\Domain\Infrastructure\Strategy\LinearStrategy;
 use Webhook\Domain\Infrastructure\Strategy\StrategyInterface;
 
-class Message implements \JsonSerializable
+class Webhook implements \JsonSerializable
 {
     const STATUS_QUEUED = 'queued';
     const STATUS_DONE = 'done';
@@ -40,7 +40,7 @@ class Message implements \JsonSerializable
      */
     private $created;
     /**
-     * Time at what message was processed to final state OK|FAIL
+     * Time at what webhook was processed to final state OK|FAIL
      *
      * @var \DateTime|null
      */
@@ -74,8 +74,11 @@ class Message implements \JsonSerializable
     /** @var  array */
     private $metadata = [];
 
+    /** @var  null|string */
+    private $callbackUrl;
+
     /**
-     * Message constructor.
+     * Webhook constructor.
      *
      * @param string $url
      * @param $body
@@ -120,6 +123,11 @@ class Message implements \JsonSerializable
         $this->nextAttempt = $nextAttempt;
     }
 
+    private function processed()
+    {
+        $this->processed = new \DateTime();
+    }
+
     /**
      * If data is raw we will send it as html form
      *
@@ -130,14 +138,9 @@ class Message implements \JsonSerializable
         return $this->raw;
     }
 
-    public function asJson()
+    public function setRaw(bool $raw)
     {
-        $this->raw = false;
-    }
-
-    public function asForm()
-    {
-        $this->raw = true;
+        $this->raw = $raw;
     }
 
     /**
@@ -316,11 +319,6 @@ class Message implements \JsonSerializable
         $this->calculateNextRetry();
     }
 
-    private function processed()
-    {
-        $this->processed = new \DateTime();
-    }
-
     /**
      * @return array
      */
@@ -335,5 +333,21 @@ class Message implements \JsonSerializable
     public function setMetadata(array $metadata)
     {
         $this->metadata = $metadata;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCallbackUrl()
+    {
+        return $this->callbackUrl;
+    }
+
+    /**
+     * @param null|string $callbackUrl
+     */
+    public function setCallbackUrl($callbackUrl)
+    {
+        $this->callbackUrl = $callbackUrl;
     }
 }

@@ -6,7 +6,7 @@ namespace Webhook\Bundle\Service;
 
 
 use Webhook\Domain\Infrastructure\HandlerInterface;
-use Webhook\Domain\Model\Message;
+use Webhook\Domain\Model\Webhook;
 use Bunny\Client;
 
 /**
@@ -35,11 +35,11 @@ final class RetryHandler implements HandlerInterface
     }
 
     /**
-     * @param Message $message
+     * @param Webhook $webhook
      */
-    public function handle(Message $message)
+    public function handle(Webhook $webhook)
     {
-        $id = $message->getId();
+        $id = $webhook->getId();
 
         $channel = $this->client->channel();
 
@@ -47,7 +47,7 @@ final class RetryHandler implements HandlerInterface
             ['x-delayed-type' => 'direct']
         );
 
-        $delay = ($message->getNextAttempt()->format('U') - time()) * 1000;
+        $delay = ($webhook->getNextAttempt()->format('U') - time()) * 1000;
 
         dump('Delay on ' . $delay);
 

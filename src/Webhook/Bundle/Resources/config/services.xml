@@ -12,8 +12,8 @@
         </parameter>
     </parameters>
     <services>
-        <service id="message.handler" class="Webhook\Domain\Infrastructure\Handler"/>
-        <service id="message.retry.handler" class="Webhook\Bundle\Service\RetryHandler">
+        <service id="webhook.handler" class="Webhook\Domain\Infrastructure\Handler"/>
+        <service id="webhook.retry.handler" class="Webhook\Bundle\Service\RetryHandler">
             <argument type="service" id="amqp.client"/>
             <argument>%webhooks.queue%</argument>
         </service>
@@ -32,14 +32,23 @@
             <argument>%webhooks.queue%</argument>
         </service>
 
-        <service id="message.repository" class="Webhook\Bundle\Repository\MessageRepository">
+        <service id="webhook.repository" class="Webhook\Bundle\Repository\WebhookRepository">
             <argument type="service" id="doctrine.orm.entity_manager"/>
         </service>
 
-        <service id="webhooks.consumer" class="Webhook\Domain\Infrastructure\MessageConsumer">
-            <argument type="service" id="message.handler"/>
-            <argument type="service" id="message.retry.handler"/>
-            <argument type="service" id="message.repository"/>
+        <service id="webhooks.consumer" class="Webhook\Bundle\Service\WebhookConsumer">
+            <argument type="service" id="webhook.handler"/>
+            <argument type="service" id="webhook.repository"/>
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+
+        <service id="webhook_bundle.event_listener.webhook_retry_listener" class="Webhook\Bundle\EventListener\WebhookRetryListener">
+            <argument id="webhook.retry.handler" type="service"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="webhook_bundle.event_listener.webhook_callback_listener" class="Webhook\Bundle\EventListener\WebhookCallbackListener">
+            <tag name="kernel.event_subscriber"/>
         </service>
 
     </services>
