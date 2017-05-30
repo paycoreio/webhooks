@@ -5,30 +5,30 @@ declare(strict_types=1);
 namespace Webhook\Domain\Repository;
 
 
-use Webhook\Domain\Model\Message;
+use Webhook\Domain\Model\Webhook;
 
-interface MessageRepositoryInterface
+interface WebhookRepositoryInterface
 {
     /**
      * @param $id
      *
-     * @return Message|null
+     * @return Webhook|null
      */
     public function get($id);
 
     /**
-     * @param Message $message
+     * @param Webhook $webhook
      *
      * @return void
      */
-    public function save(Message $message);
+    public function save(Webhook $webhook);
 
     /**
-     * @param Message $message
+     * @param Webhook $webhook
      *
      * @return void
      */
-    public function update(Message $message);
+    public function update(Webhook $webhook);
 
     /**
      * @param \DateTime $time

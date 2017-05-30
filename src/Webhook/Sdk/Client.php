@@ -28,27 +28,27 @@ class Client
     }
 
     /**
-     * @param RequestMessage $message
+     * @param RequestWebhook $webhook
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function send(RequestMessage $message)
+    public function send(RequestWebhook $webhook)
     {
         $options = [
-            RequestOptions::BODY => json_encode($message),
+            RequestOptions::BODY => json_encode($webhook),
         ];
 
-        return $this->client->post('/message', $options);
+        return $this->client->post('/webhooks', $options);
     }
 
     /**
      * @param string $id
      *
-     * @return ResponseMessage
+     * @return ResponseWebhook
      */
     public function getMessage(string $id)
     {
-        $response = $this->client->get('/message/' . $id);
-        return ResponseMessage::fromJson($response->getBody()->getContents());
+        $response = $this->client->get('/webhooks/' . $id);
+        return ResponseWebhook::fromJson($response->getBody()->getContents());
     }
 }

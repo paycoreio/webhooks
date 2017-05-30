@@ -9,7 +9,7 @@ namespace Webhook\Sdk;
  *
  * @package Webhook\Sdk
  */
-class ResponseMessage
+class ResponseWebhook
 {
     /** @var string */
     public $id;
@@ -20,7 +20,7 @@ class ResponseMessage
     /** @var string */
     public $status;
 
-    /** @var string */
+    /** @var array|string */
     public $body;
 
     /** @var bool */

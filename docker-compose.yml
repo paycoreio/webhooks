@@ -1,7 +1,7 @@
 version: '2'
 services:
     database:
-        image: postgres:9.6
+        image: postgres:9.6-alpine
         environment:
             POSTGRES_PASSWORD: webhooks
             POSTGRES_DB: webhooks

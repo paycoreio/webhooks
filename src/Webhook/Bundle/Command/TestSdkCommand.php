@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webhook\Sdk\Client;
-use Webhook\Sdk\RequestMessage;
+use Webhook\Sdk\RequestWebhook;
 
 /**
  * Class TestSdkCommand
@@ -33,11 +33,11 @@ class TestSdkCommand extends ContainerAwareCommand
         $sdkClient = new Client([
             'base_uri' => 'http://localhost',
         ]);
-        $requestMessage = new RequestMessage('http://httpbin.org/post', 'test message');
-        $requestMessage->setStrategy('exponential');
-        $requestMessage->setExpectedContent('test');
-        $requestMessage->setUserAgent('firefox');
-
-        $sdkClient->send($requestMessage);
+        $sdkClient->send(
+            (new RequestWebhook('https://requestb.in/1bu6mql1', ["a" => 1]))
+                ->setStrategy('exponential')
+                ->setUserAgent('firefox')
+                ->asForm()
+        );
     }
 }

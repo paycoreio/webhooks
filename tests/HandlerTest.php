@@ -6,7 +6,7 @@ namespace Tests;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Webhook\Domain\Infrastructure\Handler;
-use Webhook\Domain\Model\Message;
+use Webhook\Domain\Model\Webhook;
 
 /**
  * Class HandlerTest
@@ -40,12 +40,11 @@ class HandlerTest extends TestCase
      */
     public function testRequest($url, $expectedCode, $expectedContent, $content, $expected)
     {
-        $message = new Message($url, $content);
+        $message = new Webhook($url, $content);
         $message->setExpectedCode($expectedCode);
         $message->setExpectedContent($expectedContent);
 
         $result = $this->handler->handle($message);
-
         self::assertEquals($expected, $result->isSuccess());
     }
 
@@ -64,14 +63,14 @@ class HandlerTest extends TestCase
     public function dataProvider()
     {
         return [
-            [new Message('https://httpbinorg/foo', '')]
+            [new Webhook('https://httpbinorg/foo', '')]
         ];
     }
 
     public function testRawData()
     {
-        $message = new Message('http://httpbin.org/post', ['foo' => 'bar']);
-        $message->asJson();
+        $message = new Webhook('http://httpbin.org/post', json_encode(['foo' => 'bar']));
+        $message->setRaw(false);
 
         $res = $this->handler->handle($message);
         $this->assertTrue($res->isSuccess());

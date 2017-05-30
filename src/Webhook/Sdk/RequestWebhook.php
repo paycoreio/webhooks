@@ -9,13 +9,16 @@ namespace Webhook\Sdk;
  *
  * @package Webhook\Sdk
  */
-class RequestMessage implements \JsonSerializable
+class RequestWebhook implements \JsonSerializable
 {
     /** @var string */
     private $url;
 
-    /** @var string */
+    /** @var string|array */
     private $body;
+
+    /** @var bool */
+    private $raw = true;
 
     /** @var  array */
     private $strategy;
@@ -35,13 +38,16 @@ class RequestMessage implements \JsonSerializable
     /** @var  array */
     private $metadata;
 
+    /** @var  string */
+    private $callbackUrl;
+
     /**
      * Message constructor.
      *
      * @param string $url
-     * @param string $body
+     * @param string|array $body
      */
-    public function __construct(string $url, string $body)
+    public function __construct(string $url, $body)
     {
         $this->url = $url;
         $this->body = $body;
@@ -56,9 +62,9 @@ class RequestMessage implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return string|array
      */
-    public function getBody(): string
+    public function getBody()
     {
         return $this->body;
     }
@@ -66,11 +72,15 @@ class RequestMessage implements \JsonSerializable
     /**
      * @param string $strategy
      * @param array $options
+     *
+     * @return $this
      */
     public function setStrategy(string $strategy, array $options = [])
     {
         $this->strategy['name'] = $strategy;
         $this->strategy['options'] = $options;
+
+        return $this;
     }
 
     /**
@@ -83,41 +93,84 @@ class RequestMessage implements \JsonSerializable
 
     /**
      * @param int $maxAttempts
+     *
+     * @return $this
      */
     public function setMaxAttempts(int $maxAttempts)
     {
         $this->maxAttempts = $maxAttempts;
+
+        return $this;
     }
 
     /**
      * @param int $expectedCode
+     *
+     * @return $this
      */
     public function setExpectedCode(int $expectedCode)
     {
         $this->expectedCode = $expectedCode;
+
+        return $this;
     }
 
     /**
      * @param string $expectedContent
+     *
+     * @return $this
      */
     public function setExpectedContent(string $expectedContent)
     {
         $this->expectedContent = $expectedContent;
+
+        return $this;
     }
 
     /**
      * @param string $userAgent
+     *
+     * @return $this
      */
     public function setUserAgent(string $userAgent)
     {
         $this->userAgent = $userAgent;
+
+        return $this;
     }
 
     /**
      * @param array $metadata
+     *
+     * @return $this
      */
     public function setMetadata(array $metadata)
     {
         $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    /**
+     * @param string $callbackUrl
+     *
+     * @return $this
+     */
+    public function setCallbackUrl(string $callbackUrl)
+    {
+        $this->callbackUrl = $callbackUrl;
+
+        return $this;
+    }
+
+    public function asForm()
+    {
+        if (!is_array($this->body)) {
+            throw new \RuntimeException('If you want to send body as form data, you should set body as array.');
+        }
+
+        $this->raw = false;
+
+        return $this;
     }
 }
