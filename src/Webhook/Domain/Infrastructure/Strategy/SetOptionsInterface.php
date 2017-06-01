@@ -11,5 +11,10 @@ namespace Webhook\Domain\Infrastructure\Strategy;
  */
 interface SetOptionsInterface
 {
+    /**
+     * @param array $options
+     *
+     * @return void
+     */
     public function setOptions(array $options);
 }

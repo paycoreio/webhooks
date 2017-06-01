@@ -7,6 +7,11 @@ namespace Webhook\Bundle\Service;
 use Bunny\Client;
 use Webhook\Domain\Model\Webhook;
 
+/**
+ * Class WebhookProducer
+ *
+ * @package Webhook\Bundle\Service
+ */
 final class WebhookProducer
 {
     /**

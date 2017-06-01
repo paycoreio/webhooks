@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace Webhook\Domain\Infrastructure\Strategy;
 
 
+/**
+ * Class StrategyRegistry
+ *
+ * @package Webhook\Domain\Infrastructure\Strategy
+ */
 final class StrategyRegistry
 {
     private static $map = [
@@ -12,6 +17,11 @@ final class StrategyRegistry
         'linear'      => LinearStrategy::class,
     ];
 
+    /**
+     * @param string $name
+     *
+     * @return bool|mixed
+     */
     public static function getClassByName(string $name)
     {
         if (!array_key_exists($name, self::$map)) {
@@ -21,7 +31,12 @@ final class StrategyRegistry
         return self::$map[$name];
     }
 
-    public static function getName(StrategyInterface $strategy)
+    /**
+     * @param StrategyInterface $strategy
+     *
+     * @return bool
+     */
+    public static function getName(StrategyInterface $strategy): bool
     {
         $class = get_class($strategy);
 

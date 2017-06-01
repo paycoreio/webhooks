@@ -10,6 +10,11 @@ use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 use Webhook\Domain\Model\Webhook;
 
+/**
+ * Class Handler
+ *
+ * @package Webhook\Domain\Infrastructure
+ */
 final class Handler implements HandlerInterface
 {
     /** @var  string */
@@ -18,6 +23,11 @@ final class Handler implements HandlerInterface
     /** @var Client|null */
     protected $client;
 
+    /**
+     * Handler constructor.
+     *
+     * @param null $client
+     */
     public function __construct($client = null)
     {
         if (null === $client) {
@@ -35,7 +45,7 @@ final class Handler implements HandlerInterface
      *
      * @return RequestResult
      */
-    public function handle(Webhook $webhook)
+    public function handle(Webhook $webhook): RequestResult
     {
         $result = RequestResult::success();
 
@@ -72,7 +82,7 @@ final class Handler implements HandlerInterface
         $headers = [
             'Next-Retry'  => $webhook->getNextAttempt()->format('U'),
             'Retry-Count' => $webhook->getAttempt(),
-            'User-Agent'  => $webhook->getUserAgent() ? $webhook->getUserAgent() : $this->defaultClient
+            'User-Agent'  => $webhook->getUserAgent() ?: $this->defaultClient
         ];
 
         if ($webhook->isRaw()) {

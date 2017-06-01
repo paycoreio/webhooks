@@ -75,7 +75,12 @@ class ResponseWebhook
         }
     }
 
-    public static function isTimestamp($timestamp)
+    /**
+     * @param $timestamp
+     *
+     * @return bool
+     */
+    public static function isTimestamp($timestamp): bool
     {
         return ((string) (int) $timestamp === $timestamp)
             && ($timestamp <= PHP_INT_MAX)

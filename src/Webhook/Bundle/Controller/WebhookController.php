@@ -38,7 +38,7 @@ class WebhookController extends Controller
      * @return Response
      * @Route(path="webhooks", methods={"POST"})
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
 
@@ -58,6 +58,11 @@ class WebhookController extends Controller
         return new JsonResponse($message, Response::HTTP_CREATED);
     }
 
+    /**
+     * @param array $data
+     *
+     * @return bool|JsonResponse
+     */
     private function validate(array $data)
     {
         $validator = Validation::createValidator();
@@ -77,7 +82,10 @@ class WebhookController extends Controller
         return true;
     }
 
-    private function getConstraints()
+    /**
+     * @return Collection
+     */
+    private function getConstraints(): Collection
     {
         $strategiesMap = StrategyRegistry::getMap();
         $strategies = array_keys($strategiesMap);
@@ -112,7 +120,7 @@ class WebhookController extends Controller
      * @return JsonResponse
      * @Route("/webhooks/{id}", methods={"GET"})
      */
-    public function getAction($id)
+    public function getAction($id): JsonResponse
     {
         $message = $this->get('webhook.repository')->get($id);
 

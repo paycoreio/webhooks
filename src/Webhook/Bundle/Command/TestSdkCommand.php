@@ -34,7 +34,7 @@ class TestSdkCommand extends ContainerAwareCommand
             'base_uri' => 'http://localhost',
         ]);
         $sdkClient->send(
-            (new RequestWebhook('https://requestb.in/1bu6mql1', ["a" => 1]))
+            (new RequestWebhook('https://requestb.in/1bu6mql1', ['a' => 1]))
                 ->setStrategy('exponential')
                 ->setUserAgent('firefox')
                 ->asForm()

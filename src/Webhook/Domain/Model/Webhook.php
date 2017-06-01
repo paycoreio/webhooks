@@ -9,6 +9,11 @@ use Webhook\Domain\Infrastructure\Strategy\AbstractStrategy;
 use Webhook\Domain\Infrastructure\Strategy\LinearStrategy;
 use Webhook\Domain\Infrastructure\Strategy\StrategyInterface;
 
+/**
+ * Class Webhook
+ *
+ * @package Webhook\Domain\Model
+ */
 class Webhook implements \JsonSerializable
 {
     const STATUS_QUEUED = 'queued';
@@ -28,7 +33,7 @@ class Webhook implements \JsonSerializable
     private $status;
 
     /** @var array */
-    private $body = [];
+    private $body;
     /**
      * We can send body as raw json or array form data
      *
@@ -59,16 +64,16 @@ class Webhook implements \JsonSerializable
     /** @var int */
     private $expectedCode = 200;
 
-    /** @var  string */
+    /** @var  string|null */
     private $expectedContent;
 
-    /** @var  string */
+    /** @var  string|null */
     private $userAgent;
 
     /** @var  StrategyInterface|AbstractStrategy */
     private $strategy;
 
-    /** @var  string */
+    /** @var  string|null */
     private $statusDetails;
 
     /** @var  array */
@@ -138,6 +143,9 @@ class Webhook implements \JsonSerializable
         return $this->raw;
     }
 
+    /**
+     * @param bool $raw
+     */
     public function setRaw(bool $raw)
     {
         $this->raw = $raw;
@@ -202,7 +210,7 @@ class Webhook implements \JsonSerializable
     /**
      * @return string
      */
-    public function getUserAgent()
+    public function getUserAgent(): ?string
     {
         return $this->userAgent;
     }
@@ -210,7 +218,7 @@ class Webhook implements \JsonSerializable
     /**
      * @return \DateTime
      */
-    public function getProcessed()
+    public function getProcessed(): \DateTime
     {
         return $this->processed;
     }
@@ -232,7 +240,7 @@ class Webhook implements \JsonSerializable
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $result = [];
         foreach (get_object_vars($this) as $k => $v) {
@@ -289,7 +297,7 @@ class Webhook implements \JsonSerializable
     /**
      * @return string
      */
-    public function getStatusDetails()
+    public function getStatusDetails(): string
     {
         return $this->statusDetails;
     }

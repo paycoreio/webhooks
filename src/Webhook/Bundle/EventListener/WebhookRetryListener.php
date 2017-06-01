@@ -10,11 +10,21 @@ use Webhook\Bundle\Event\WebhookEvent;
 use Webhook\Bundle\WebhookEvents;
 use Webhook\Domain\Infrastructure\HandlerInterface;
 
+/**
+ * Class WebhookRetryListener
+ *
+ * @package Webhook\Bundle\EventListener
+ */
 final class WebhookRetryListener implements EventSubscriberInterface
 {
     /** @var  HandlerInterface */
     private $retryHandler;
 
+    /**
+     * WebhookRetryListener constructor.
+     *
+     * @param HandlerInterface $retryHandler
+     */
     public function __construct(HandlerInterface $retryHandler)
     {
         $this->retryHandler = $retryHandler;
@@ -23,13 +33,16 @@ final class WebhookRetryListener implements EventSubscriberInterface
     /**
      * @inheritdoc
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             WebhookEvents::WEBHOOK_RETRY => 'handle',
         ];
     }
 
+    /**
+     * @param WebhookEvent $event
+     */
     public function handle(WebhookEvent $event)
     {
         $this->retryHandler->handle($event->getWebhook());

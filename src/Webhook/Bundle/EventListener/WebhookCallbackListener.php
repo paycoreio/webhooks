@@ -13,11 +13,21 @@ use Webhook\Bundle\Event\WebhookEvent;
 use Webhook\Bundle\WebhookEvents;
 use Webhook\Domain\Model\Webhook;
 
+/**
+ * Class WebhookCallbackListener
+ *
+ * @package Webhook\Bundle\EventListener
+ */
 final class WebhookCallbackListener implements EventSubscriberInterface
 {
     /** @var Client */
     private $client;
 
+    /**
+     * WebhookCallbackListener constructor.
+     *
+     * @param Client|null $client
+     */
     public function __construct(Client $client = null)
     {
         if (null === $client) {
@@ -31,7 +41,7 @@ final class WebhookCallbackListener implements EventSubscriberInterface
     /**
      * @inheritdoc
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             WebhookEvents::WEBHOOK_DONE => 'handle',
@@ -39,6 +49,9 @@ final class WebhookCallbackListener implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param WebhookEvent $event
+     */
     public function handle(WebhookEvent $event)
     {
         $webhook = $event->getWebhook();

@@ -36,6 +36,8 @@ final class RetryHandler implements HandlerInterface
 
     /**
      * @param Webhook $webhook
+     *
+     * @return void
      */
     public function handle(Webhook $webhook)
     {
@@ -48,8 +50,6 @@ final class RetryHandler implements HandlerInterface
         );
 
         $delay = ($webhook->getNextAttempt()->format('U') - time()) * 1000;
-
-        dump('Delay on ' . $delay);
 
         $channel->publish($id, ['x-delay' => $delay], $this->queueName);
     }

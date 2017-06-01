@@ -32,7 +32,7 @@ class Client
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function send(RequestWebhook $webhook)
+    public function send(RequestWebhook $webhook): \Psr\Http\Message\ResponseInterface
     {
         $options = [
             RequestOptions::BODY => json_encode($webhook),
@@ -46,7 +46,7 @@ class Client
      *
      * @return ResponseWebhook
      */
-    public function getMessage(string $id)
+    public function getMessage(string $id): ResponseWebhook
     {
         $response = $this->client->get('/webhooks/' . $id);
         return ResponseWebhook::fromJson($response->getBody()->getContents());

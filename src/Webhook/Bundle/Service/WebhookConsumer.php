@@ -74,21 +74,34 @@ final class WebhookConsumer
         }
     }
 
+    /**
+     * @param Webhook $webhook
+     */
     private function notifyFail(Webhook $webhook)
     {
         $this->notify(WebhookEvents::WEBHOOK_FAIL, $webhook);
     }
 
+    /**
+     * @param string $event
+     * @param Webhook $webhook
+     */
     private function notify(string $event, Webhook $webhook)
     {
         $this->dispatcher->dispatch($event, new WebhookEvent($webhook));
     }
 
+    /**
+     * @param Webhook $webhook
+     */
     private function notifyRetry(Webhook $webhook)
     {
         $this->notify(WebhookEvents::WEBHOOK_RETRY, $webhook);
     }
 
+    /**
+     * @param Webhook $webhook
+     */
     private function notifyDone(Webhook $webhook)
     {
         $this->notify(WebhookEvents::WEBHOOK_DONE, $webhook);

@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace Webhook\Domain\Infrastructure\Strategy;
 
 
+/**
+ * Class StrategyFactory
+ *
+ * @package Webhook\Domain\Infrastructure\Strategy
+ */
 class StrategyFactory
 {
     /**

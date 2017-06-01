@@ -12,6 +12,9 @@ namespace Webhook\Domain\Infrastructure\Strategy;
  */
 abstract class AbstractStrategy implements \Serializable, \JsonSerializable, StrategyInterface
 {
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
         return $this->getOptions() + ['name' => StrategyRegistry::getName($this)];
@@ -20,7 +23,7 @@ abstract class AbstractStrategy implements \Serializable, \JsonSerializable, Str
     /**
      * @return string
      */
-    public function serialize()
+    public function serialize(): string
     {
         return json_encode($this->getOptions());
     }

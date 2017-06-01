@@ -7,6 +7,11 @@ namespace Webhook\Domain\Repository;
 
 use Webhook\Domain\Model\Webhook;
 
+/**
+ * Interface WebhookRepositoryInterface
+ *
+ * @package Webhook\Domain\Repository
+ */
 interface WebhookRepositoryInterface
 {
     /**

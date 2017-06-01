@@ -86,7 +86,7 @@ class RequestWebhook implements \JsonSerializable
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return get_object_vars($this);
     }
@@ -163,6 +163,9 @@ class RequestWebhook implements \JsonSerializable
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function asForm()
     {
         if (!is_array($this->body)) {
