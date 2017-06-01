@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
 set -xe
 
-composer install -o -q -n
+if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+  if ([ "$TRAVIS_BRANCH" == "master" ]) ; then
+    composer install -o -q -n
+    docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} -e ${DOCKER_EMAIL}
 
-TAGGED="paymaxi/webhooks:${TRAVIS_TAG}"
-LATEST="paymaxi/webhooks:latest"
+    LATEST="paymaxi/webhooks:latest"
+    docker build -f etc/docker/php/Dockerfile.prod -t ${LATEST} .
+    docker push ${LATEST}
+  fi
+  
+  if ([ ! -z "$TRAVIS_TAG" ]); then
+    TAGGED="paymaxi/webhooks:${TRAVIS_TAG}"
 
-docker build -f etc/docker/php/Dockerfile.prod -t ${TAGGED} -t ${LATEST} .
-
-docker push ${TAGGED}
-docker push ${LATEST}
+    docker build -f etc/docker/php/Dockerfile.prod -t ${TAGGED} .
+    docker push ${TAGGED}
+  fi
+fi

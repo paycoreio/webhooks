@@ -1,4 +1,6 @@
 language: php
+cache:
+    - vendor
 php:
     - '7.0'
     - '7.1'
@@ -13,12 +15,7 @@ after_script:
         php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
       fi
 
-after_success:
-  - |
-    if ([ "$TRAVIS_BRANCH" == "master" ] || [ ! -z "$TRAVIS_TAG" ]) && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-        docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} -e ${DOCKER_EMAIL}
-        ./etc/docker/deploy.sh
-    fi
+after_success: ./etc/docker/deploy.sh    
 
 install:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
