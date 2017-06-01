@@ -16,15 +16,12 @@ after_script:
 after_success:
   - |
     if ([ "$TRAVIS_BRANCH" == "master" ] || [ ! -z "$TRAVIS_TAG" ]) && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-        echo "I will be deployed"
+        docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} -e ${DOCKER_EMAIL}
+        ./etc/docker/deploy.sh
     fi
 
 install:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - travis_retry composer self-update && composer --version
-
-services:
-    - redis-server
-    - rabbit
 
 script: phpunit --configuration phpunit.xml

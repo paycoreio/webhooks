@@ -3,4 +3,10 @@ set -xe
 
 composer install -o -q -n
 
-docker build -f etc/docker/php/Dockerfile.prod -t dzubchik/webhooks .
+TAGGED="paymaxi/webhooks:${TRAVIS_TAG}"
+LATEST="paymaxi/webhooks:latest"
+
+docker build -f etc/docker/php/Dockerfile.prod -t ${TAGGED} -t ${LATEST} .
+
+docker push ${TAGGED}
+docker push ${LATEST}
