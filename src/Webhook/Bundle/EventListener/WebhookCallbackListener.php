@@ -62,7 +62,11 @@ final class WebhookCallbackListener implements EventSubscriberInterface
 
         $request = $this->createRequest($webhook);
 
-        $this->client->send($request);
+        try {
+            $this->client->send($request);
+        } catch (\Throwable $exception) {
+            // just skip :)
+        }
     }
 
     /**

@@ -53,7 +53,10 @@ final class WebhookConsumer
     {
         $webhook = $this->repository->get($id);
 
-        if (null !== $webhook) {
+        if (null === $webhook) {
+            return;
+        }
+        try {
             if ($webhook->getStatus() === Webhook::STATUS_FAILED) {
                 $this->notifyFail($webhook);
                 return;
@@ -69,9 +72,12 @@ final class WebhookConsumer
                 $webhook->done();
                 $this->notifyDone($webhook);
             }
-
-            $this->repository->update($webhook);
+        } catch (\Throwable $exception) {
+            $webhook->setStatus(Webhook::STATUS_FAILED);
+            $webhook->setStatusDetails($exception->getMessage());
         }
+
+        $this->repository->update($webhook);
     }
 
     /**

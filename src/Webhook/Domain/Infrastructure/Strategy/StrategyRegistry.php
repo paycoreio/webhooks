@@ -20,12 +20,12 @@ final class StrategyRegistry
     /**
      * @param string $name
      *
-     * @return bool|mixed
+     * @return string
      */
-    public static function getClassByName(string $name)
+    public static function getClassByName(string $name):string
     {
         if (!array_key_exists($name, self::$map)) {
-            return false;
+            throw new \InvalidArgumentException('Unsupported strategy class.');
         }
 
         return self::$map[$name];
@@ -34,14 +34,14 @@ final class StrategyRegistry
     /**
      * @param StrategyInterface $strategy
      *
-     * @return bool
+     * @return string
      */
-    public static function getName(StrategyInterface $strategy): bool
+    public static function getName(StrategyInterface $strategy): string
     {
         $class = get_class($strategy);
 
         if (!in_array($class, self::$map)) {
-            return false;
+            throw new \InvalidArgumentException('Unsupported strategy.');
         }
 
         return array_flip(self::$map)[$class];

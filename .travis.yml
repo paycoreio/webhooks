@@ -13,6 +13,12 @@ after_script:
         php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
       fi
 
+after_success:
+  - |
+    if ([ "$TRAVIS_BRANCH" == "master" ] || [ ! -z "$TRAVIS_TAG" ]) && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+        echo "I will be deployed"
+    fi
+
 install:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - travis_retry composer self-update && composer --version

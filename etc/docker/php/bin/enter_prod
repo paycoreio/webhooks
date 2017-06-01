@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -xe
+
+rm /app/var/cache/* -rf
+
+chown www-data:www-data /app/ -R
+
+source /usr/local/bin/fix_permissions
+sleep 5
+main
+
+runAsUser "/app/bin/console doc:sc:up --force" www-data
+runAsUser "/app/bin/console ca:cl --env=prod" www-data
+
+/usr/bin/supervisord -c /etc/supervisor/supervisord.conf

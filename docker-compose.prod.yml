@@ -1,0 +1,25 @@
+version: '2'
+services:
+    database:
+        image: postgres:9.6-alpine
+        environment:
+            POSTGRES_PASSWORD: webhooks
+            POSTGRES_DB: webhooks
+            POSTGRES_USER: webhooks
+        ports:
+            - "5432:5432"
+
+    rabbit:
+        image: dzubchik/rabbitmq
+        ports:
+            - "15672:15672"
+            - "5672:5672"
+
+    app:
+        image: dzubchik/webhooks
+        ports:
+           - "80:80"
+        links:
+            - rabbit
+            - database
+        working_dir: /app
