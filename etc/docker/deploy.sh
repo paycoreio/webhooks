@@ -10,7 +10,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     docker build -f etc/docker/php/Dockerfile.prod -t ${LATEST} .
     docker push ${LATEST}
   fi
-  
+
   if ([ ! -z "$TRAVIS_TAG" ]); then
     TAGGED="paymaxi/webhooks:${TRAVIS_TAG}"
 

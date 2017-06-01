@@ -1,4 +1,9 @@
+sudo: required
+services:
+  - docker
+
 language: php
+
 cache:
     - vendor
 php:
@@ -15,7 +20,7 @@ after_script:
         php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
       fi
 
-after_success: ./etc/docker/deploy.sh    
+after_success: ./etc/docker/deploy.sh
 
 install:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
