@@ -210,7 +210,7 @@ class Webhook implements \JsonSerializable
     /**
      * @return string
      */
-    public function getUserAgent(): ?string
+    public function getUserAgent()
     {
         return $this->userAgent;
     }
