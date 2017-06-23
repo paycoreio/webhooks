@@ -10,6 +10,6 @@ sleep 5
 main
 
 runAsUser "/app/bin/console doc:sc:up --force" www-data
-runAsUser "/app/bin/console ca:cl --env=prod" www-data
+runAsUser "/app/bin/console ca:cl" www-data
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf

@@ -1,0 +1,13 @@
+webhooks:
+    path: /webhooks
+    defaults:
+        _controller: WebhookBundle:Webhook:create
+    methods:
+        - POST
+webhooks_get:
+    path: /webhooks/{id}
+    defaults:
+        _controller: WebhookBundle:Webhook:get
+    methods:
+        - GET
+

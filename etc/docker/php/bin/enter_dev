@@ -7,6 +7,6 @@ main
 
 runAsUser "composer install -o -vvv -n"
 runAsUser "/app/bin/console doc:sc:up --force"
-runAsUser "/app/bin/console ca:cl --env=dev"
+runAsUser "/app/bin/console ca:cl"
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf

@@ -1,3 +1,2 @@
 app:
-    resource: '@WebhookBundle/Controller/WebhookController.php'
-    type: annotation
+    resource: '@WebhookBundle/Resources/config/routing.yml'
