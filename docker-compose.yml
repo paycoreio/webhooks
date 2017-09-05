@@ -20,7 +20,7 @@ services:
             dockerfile: etc/docker/php/Dockerfile
             context: .
         ports:
-           - "80:80"
+           - "82:80"
         volumes:
             - .:/app
         links:

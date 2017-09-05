@@ -1,17 +1,28 @@
-FROM php:7.1-fpm
+FROM alpine:3.6
 
-RUN apt-get update -q && apt-get install -y -q --no-install-recommends \
+RUN apk --update --no-cache add \
+    php7 \
+    php7-fpm \
+    php7-xml \
+    php7-dom \
+    php7-json \
+    php7-phar \
+    php7-iconv \
+    php7-openssl \
+    php7-zlib \
+    php7-pdo \
+    php7-pdo_pgsql \
+    php7-pgsql \
+    php7-pcntl \
+    php7-ctype \
+    php7-mbstring \
+    php7-xdebug \
     sudo \
     unzip \
-    libpq-dev \
     supervisor \
-    nginx-light
-
-RUN rm -rf /var/lib/apt/lists/*
-
-RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo pdo_pgsql pgsql pcntl \
-    && pecl install xdebug apcu
+    nginx \
+    curl \
+    bash
 
 COPY etc/docker/php/assets/php.ini /usr/local/etc/php/php.ini
 
