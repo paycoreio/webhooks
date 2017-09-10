@@ -1,15 +1,26 @@
 #!/usr/bin/env bash
-set -xe
+set -eo pipefail
+
+sleep 10
+
+[[ "${DEBUG}" = "true" ]] && set -x
+
+run(){
+    sudo -u www-data sh -c "${1}"
+}
+
+chown www-data:www-data . -R
 
 rm /app/var/cache/* -rf
 
-chown www-data:www-data /app/ -R
+export WH_SYMFONY_ENV=prod
+export WH_SYMFONY_DEBUG=0
 
-source /usr/local/bin/fix_permissions
-sleep 5
-main
+# here we pass env variables to config
+source /usr/local/bin/set_env
 
-runAsUser "/app/bin/console doc:sc:up --force" www-data
-runAsUser "/app/bin/console ca:cl" www-data
+run "KEY_PREFIX=WH /usr/local/bin/set_env"
+run "/app/bin/console doc:sc:up --force"
+run "/app/bin/console ca:cl"
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf

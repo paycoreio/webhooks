@@ -13,8 +13,7 @@ if ( [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_PHP_VERSION" == "7.0" ]
 
   if ([ ! -z "$TRAVIS_TAG" ]); then
     TAGGED="paymaxi/webhooks:${TRAVIS_TAG}"
-    echo 'SYMFONY_ENV=prod' >> .env
-    echo 'SYMFONY_DEBUG=0' >> .env
+    cp .env.dist .env
     docker build -f etc/docker/php/Dockerfile.prod -t ${TAGGED} .
     docker push ${TAGGED}
   fi

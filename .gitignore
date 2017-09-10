@@ -6,3 +6,4 @@ var/sessions
 /.idea
 /etc/docker/php/ssh/
 /app/config/parameters.yml
+.env

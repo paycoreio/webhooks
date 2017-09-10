@@ -2,19 +2,16 @@
 # Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
 # http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
-    database_host: database
-    database_port: ~
-    database_name: webhooks
-    database_user: webhooks
-    database_password: webhooks
-    # You should uncomment this if you want to use pdo_sqlite
-    #database_path: "%kernel.root_dir%/data.db3"
+    database_host:     "%env(DATABASE_HOST)%"
+    database_port:     "%env(DATABASE_PORT)%"
+    database_name:     "%env(DATABASE_NAME)%"
+    database_user:     "%env(DATABASE_USER)%"
+    database_password: "%env(DATABASE_PASSWORD)%"
 
-    # A secret key that's used to generate certain security-related tokens
-    secret: ThisTokenIsNotSoSecretChangeIt
+    secret: "%env(SYMFONY_SECRET)%"
 
-    rabbitmq_host: rabbit
-    rabbitmq_port: 5672
-    rabbitmq_user: guest
-    rabbitmq_password: guest
-    rabbitmq_virtual_host: /
+    rabbitmq_host: "%env(RABBITMQ_HOST)%"
+    rabbitmq_port: "%env(RABBITMQ_PORT)%"
+    rabbitmq_user: "%env(RABBITMQ_USER)%"
+    rabbitmq_password: "%env(RABBITMQ_PASSWORD)%"
+    rabbitmq_virtual_host: "%env(RABBITMQ_VIRTUAL_HOST)%"

@@ -10,7 +10,7 @@ use Symfony\Component\Dotenv\Dotenv;
 $loader = require __DIR__ . '/../app/autoload.php';
 
 $dotenv = new Dotenv();
-$dotenv->load(__DIR__ . '/../.env', __DIR__ . '/../.env.dist');
+$dotenv->load(__DIR__ . '/../.env');
 
 $env = getenv('SYMFONY_ENV');
 $debug = getenv('SYMFONY_DEBUG');
