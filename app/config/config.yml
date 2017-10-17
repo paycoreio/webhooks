@@ -53,3 +53,12 @@ doctrine:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
+
+nelmio_cors:
+    paths:
+        '^/':
+            origin_regex: true
+            allow_origin: "*"
+            allow_headers: "*"
+            allow_methods: ['PATCH', 'POST', 'PUT', 'GET', 'DELETE', 'OPTIONS']
+            max_age: 3600
