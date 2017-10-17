@@ -11,3 +11,9 @@ webhooks_get:
     methods:
         - GET
 
+webhooks_get_last:
+    path: /webhooks/
+    defaults:
+        _controller: WebhookBundle:Webhook:getLast
+    methods:
+        - GET

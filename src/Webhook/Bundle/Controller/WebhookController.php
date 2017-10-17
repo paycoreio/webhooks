@@ -19,6 +19,7 @@ use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Required;
 use Symfony\Component\Validator\Constraints\Url;
 use Symfony\Component\Validator\Validation;
+use Webhook\Bundle\Repository\WebhookRepository;
 use Webhook\Domain\Infrastructure\Strategy\StrategyFactory;
 use Webhook\Domain\Infrastructure\Strategy\StrategyRegistry;
 use Webhook\Domain\Model\Webhook;
@@ -129,6 +130,17 @@ class WebhookController extends Controller
     }
 
     /**
+     * @return JsonResponse
+     */
+    public function getLastAction(): JsonResponse
+    {
+        /** @var WebhookRepository $message */
+        $repo = $this->get('webhook.repository');
+
+        return new JsonResponse($repo->getLastWebhooks(50));
+    }
+
+    /**
      * @param $data
      *
      * @return Webhook
@@ -141,7 +153,7 @@ class WebhookController extends Controller
         unset($data['url'], $data['body']);
 
         if (null !== $data['strategy']) {
-            $name = $data['strategy']['name'];
+            $name = $data['strategy']['name'];  
             $options = $data['strategy']['options'] ?? [];
 
             $data['strategy'] = StrategyFactory::create($name, $options);

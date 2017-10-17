@@ -42,6 +42,19 @@ class WebhookRepository implements WebhookRepositoryInterface
     }
 
     /**
+     * @param int $count
+     *
+     * @return array
+     */
+    public function getLastWebhooks(int $count)
+    {
+        $qb = $this->em->getRepository(Webhook::class)->createQueryBuilder('e');
+        $qb->setMaxResults($count);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param Webhook $webhook
      */
     public function update(Webhook $webhook)
