@@ -47,9 +47,11 @@
       "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
     ],
     "post-install-cmd": [
+      "php -r \"file_exists('.env') || copy('.env.dist', '.env');\"",
       "@symfony-scripts"
     ],
     "post-update-cmd": [
+      "php -r \"file_exists('.env') || copy('.env.dist', '.env');\"",
       "@symfony-scripts"
     ]
   },
