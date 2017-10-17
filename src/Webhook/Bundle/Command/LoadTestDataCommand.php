@@ -33,7 +33,7 @@ class LoadTestDataCommand extends ContainerAwareCommand
         $repository = $this->getContainer()->get('webhook.repository');
 
         for ($i = 1; $i <= 100; $i++) {
-            $webhook = new Webhook('http://httpbin.org/status/500', 'body');
+            $webhook = new Webhook('http://httpbin.org/status/200', 'body');
             $repository->save($webhook);
         }
     }
