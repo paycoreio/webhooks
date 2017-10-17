@@ -41,4 +41,11 @@ interface WebhookRepositoryInterface
      * @return void
      */
     public function clearOutdated(\DateTime $time);
+
+    /**
+     * @param int $count
+     *
+     * @return array
+     */
+    public function getLastWebhooks(int $count): array;
 }

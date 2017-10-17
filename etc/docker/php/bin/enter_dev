@@ -5,8 +5,14 @@ source /app/etc/docker/php/bin/fix_permissions
 sleep 5
 main
 
+if [[ ! -e .env ]]; then
+    cp .env.dist .env
+fi
+
 runAsUser "composer install -o -vvv -n"
 runAsUser "/app/bin/console doc:sc:up --force"
 runAsUser "/app/bin/console ca:cl"
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+
+/app/bin/console ser:run 0.0.0.0:8080
