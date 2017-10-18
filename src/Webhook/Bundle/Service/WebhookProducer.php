@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Webhook\Bundle\Service;
 
-use Bunny\Client;
+use Enqueue\Client\ProducerInterface;
 use Webhook\Domain\Model\Webhook;
 
 /**
@@ -14,25 +14,17 @@ use Webhook\Domain\Model\Webhook;
  */
 final class WebhookProducer
 {
-    /**
-     * @var Client
-     */
-    private $client;
-    /**
-     * @var string
-     */
-    private $queueName;
+    /** @var ProducerInterface */
+    private $producer;
 
     /**
-     * WebhookProducer constructor.
+     * RatesCollector constructor.
      *
-     * @param Client $client
-     * @param string $queue
+     * @param ProducerInterface $producer
      */
-    public function __construct(Client $client, string $queue)
+    public function __construct(ProducerInterface $producer)
     {
-        $this->client = $client;
-        $this->queueName = $queue;
+        $this->producer = $producer;
     }
 
     /**
@@ -40,14 +32,7 @@ final class WebhookProducer
      */
     public function publish(Webhook $message)
     {
-        $id = $message->getId();
-        $channel = $this->client->channel();
-
-        $channel->exchangeDeclare($this->queueName, 'x-delayed-message', false, true, false, false, false,
-            ['x-delayed-type' => 'direct']
-        );
-
-        $channel->publish($id, [], $this->queueName);
+        $this->producer->sendCommand(WebhookProcessor::NAME, $message->getId());
     }
 
 }

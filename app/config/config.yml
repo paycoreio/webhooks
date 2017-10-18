@@ -62,3 +62,11 @@ nelmio_cors:
             allow_headers: "*"
             allow_methods: ['PATCH', 'POST', 'PUT', 'GET', 'DELETE', 'OPTIONS']
             max_age: 3600
+
+enqueue:
+    client:
+        app_name: "webhooks"
+    transport:
+        default: 'amqp'
+        amqp:
+            dsn: '%rabbitmq_dsn%'
