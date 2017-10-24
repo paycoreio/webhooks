@@ -1,7 +1,5 @@
 FROM alpine:3.6
 
-FROM alpine:3.6
-
 RUN apk --update --no-cache add \
     php7 \
     php7-amqp \
@@ -33,24 +31,22 @@ RUN apk --update --no-cache add \
     php7-bz2 \
     php7-redis \
     php7-posix \
+    php7-xdebug \
     sudo \
     unzip \
     curl \
     bash
 
-COPY etc/docker/php/assets/php.ini /usr/local/etc/php/php.ini
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY etc/docker/php/assets/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY etc/docker/php/assets/nginx/symfony.conf /etc/nginx/sites-enabled/default
+COPY etc/docker/php/assets/php.ini /etc/php7/php.ini
 
-COPY etc/docker/php/assets/xdebug.ini /usr/local/etc/php/conf.d/
+COPY etc/docker/php/assets/xdebug.ini /etc/php7/conf.d/
 COPY etc/docker/php/bin/* /usr/local/bin/
 
 COPY etc/docker/php/assets/supervisor/conf.d/* /etc/supervisor/conf.d/
 COPY etc/docker/php/assets/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 CMD ["/app/etc/docker/php/bin/enter_dev"]
 ENV TERM=xterm
-EXPOSE 80
+EXPOSE 8080

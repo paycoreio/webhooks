@@ -22,5 +22,6 @@ source /usr/local/bin/set_env
 run "KEY_PREFIX=WH /usr/local/bin/set_env"
 run "/app/bin/console doc:sc:up --force"
 run "/app/bin/console ca:cl"
+run "/app/bin/console enqueue:setup-broker -vvv"
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf

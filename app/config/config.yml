@@ -67,6 +67,7 @@ enqueue:
     client:
         app_name: "webhooks"
     transport:
-        default: 'amqp'
-        amqp:
+        default: 'rabbitmq_amqp'
+        rabbitmq_amqp:
             dsn: '%rabbitmq_dsn%'
+            delay_strategy: 'dlx'

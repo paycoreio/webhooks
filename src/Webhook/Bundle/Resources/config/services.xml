@@ -31,13 +31,18 @@
             <argument type="service" id="event_dispatcher"/>
         </service>
 
-        <service id="webhook_bundle.event_listener.webhook_retry_listener" class="Webhook\Bundle\EventListener\WebhookRetryListener">
+        <service id="webhooks.retry_listener" class="Webhook\Bundle\EventListener\WebhookRetryListener">
             <argument id="webhook.retry.handler" type="service"/>
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="webhook_bundle.event_listener.webhook_callback_listener" class="Webhook\Bundle\EventListener\WebhookCallbackListener">
+        <service id="webhooks.callback_listener" class="Webhook\Bundle\EventListener\WebhookCallbackListener">
             <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="webhooks.webhook_processor" class="Webhook\Bundle\Service\WebhookProcessor">
+            <argument id="webhooks.consumer" type="service"/>
+            <tag name="enqueue.client.processor"/>
         </service>
 
     </services>

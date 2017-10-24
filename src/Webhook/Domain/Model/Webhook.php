@@ -245,7 +245,7 @@ class Webhook implements \JsonSerializable
         $result = [];
         foreach (get_object_vars($this) as $k => $v) {
             if ($v instanceof \DateTime) {
-                $v = $v->format('U');
+                $v = (int)$v->format('U');
             }
 
             $result[$k] = $v;

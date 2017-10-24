@@ -47,7 +47,7 @@ COPY etc/docker/php/bin/enter_prod /usr/local/bin/enter
 
 COPY etc/docker/php/assets/supervisor/conf.d/* /etc/supervisor/conf.d/
 
-COPY etc/docker/php/assets/supervisor/consumer-prod.conf /etc/supervisor/conf.d/consumer.conf
+COPY etc/docker/php/assets/supervisor/conf.d/* /etc/supervisor/conf.d/
 COPY etc/docker/php/assets/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 
 COPY vendor /app/vendor

@@ -39,7 +39,7 @@ final class RetryHandler implements HandlerInterface
     {
         $id = $webhook->getId();
 
-        $delay = ($webhook->getNextAttempt()->format('U') - time()) * 1000;
+        $delay = $webhook->getNextAttempt()->getTimestamp() - time();
 
         $message = new Message($id);
         $message->setDelay($delay);

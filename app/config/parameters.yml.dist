@@ -10,8 +10,4 @@ parameters:
 
     secret: "%env(SYMFONY_SECRET)%"
 
-    rabbitmq_host: "%env(RABBITMQ_HOST)%"
-    rabbitmq_port: "%env(RABBITMQ_PORT)%"
-    rabbitmq_user: "%env(RABBITMQ_USER)%"
-    rabbitmq_password: "%env(RABBITMQ_PASSWORD)%"
-    rabbitmq_virtual_host: "%env(RABBITMQ_VIRTUAL_HOST)%"
+    rabbitmq_dsn: "%env(RABBITMQ_DSN)%"

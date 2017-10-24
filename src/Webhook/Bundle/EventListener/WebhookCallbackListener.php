@@ -81,7 +81,7 @@ final class WebhookCallbackListener implements EventSubscriberInterface
         $data = [
             'id'        => $webhook->getId(),
             'status'    => $webhook->getStatus(),
-            'processed' => $webhook->getProcessed()->format('U'),
+            'processed' => (int)$webhook->getProcessed()->format('U'),
             'metadata'  => $webhook->getMetadata(),
             'attempt'   => $webhook->getAttempt(),
         ];
