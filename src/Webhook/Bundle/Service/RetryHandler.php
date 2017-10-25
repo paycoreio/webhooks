@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Webhook\Bundle\Service;
 
 
+use Enqueue\Client\Message;
+use Enqueue\Client\ProducerInterface;
 use Webhook\Domain\Infrastructure\HandlerInterface;
 use Webhook\Domain\Model\Webhook;
-use Bunny\Client;
 
 /**
  * Class RetryHandler
@@ -16,22 +17,17 @@ use Bunny\Client;
  */
 final class RetryHandler implements HandlerInterface
 {
-    /** @var Client */
-    private $client;
-
-    /** @var string */
-    private $queueName;
+    /** @var ProducerInterface */
+    private $producer;
 
     /**
-     * RetryHandler constructor.
+     * RatesCollector constructor.
      *
-     * @param Client $client
-     * @param string $queue
+     * @param ProducerInterface $producer
      */
-    public function __construct(Client $client, string $queue)
+    public function __construct(ProducerInterface $producer)
     {
-        $this->client = $client;
-        $this->queueName = $queue;
+        $this->producer = $producer;
     }
 
     /**
@@ -43,14 +39,11 @@ final class RetryHandler implements HandlerInterface
     {
         $id = $webhook->getId();
 
-        $channel = $this->client->channel();
+        $delay = $webhook->getNextAttempt()->getTimestamp() - time();
 
-        $channel->exchangeDeclare($this->queueName, 'x-delayed-message', false, true, false, false, false,
-            ['x-delayed-type' => 'direct']
-        );
+        $message = new Message($id);
+        $message->setDelay($delay);
 
-        $delay = ($webhook->getNextAttempt()->format('U') - time()) * 1000;
-
-        $channel->publish($id, ['x-delay' => $delay], $this->queueName);
+        $this->producer->sendCommand(WebhookProcessor::NAME, $message);
     }
 }

@@ -1,7 +1,6 @@
 {
   "require": {
-    "php": ">=7.0",
-    "bunny/bunny": "^0.2.4",
+    "php": ">=7.1",
     "doctrine/doctrine-bundle": "^1.6",
     "doctrine/doctrine-cache-bundle": "^1.2",
     "doctrine/orm": "^2.5",
@@ -13,10 +12,18 @@
     "php-http/message": "^1.5",
     "ramsey/uuid": "^3.5",
     "sensio/distribution-bundle": "^5.0",
-    "symfony/monolog-bundle": "^3.0.2",
-    "symfony/polyfill-apcu": "^1.0",
+    "sensio/framework-extra-bundle": "^3.0",
+    "symfony/monolog-bundle": "^3.0",
     "symfony/symfony": "^3.3",
-    "twig/twig": "^1.0||^2.0"
+    "symfony/polyfill-apcu": "^1.0",
+    "enqueue/enqueue-bundle": "^0.7",
+    "enqueue/amqp-ext": "^0.7",
+    "php-amqplib/php-amqplib": "^2.6",
+    "enqueue/enqueue": "^0.7",
+    "twig/twig": "^1.0||^2.0",
+    "php-pm/php-pm": "dev-master",
+    "php-pm/httpkernel-adapter": "dev-master",
+    "react/http": "dev-master#cd15204bd15d106d7832c680e4fb0ca0ce2f5e30"
   },
   "autoload": {
     "psr-4": {
@@ -55,12 +62,6 @@
       "@symfony-scripts"
     ]
   },
-  "config": {
-    "platform": {
-      "php": "7.0"
-    },
-    "sort-packages": true
-  },
   "extra": {
     "symfony-app-dir": "app",
     "symfony-bin-dir": "bin",
@@ -70,6 +71,9 @@
     "symfony-assets-install": "relative",
     "incenteev-parameters": {
       "file": "app/config/parameters.yml"
+    },
+    "branch-alias": {
+      "dev-master": "3.2-dev"
     }
   }
 }

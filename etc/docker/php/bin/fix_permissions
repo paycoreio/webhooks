@@ -12,9 +12,9 @@ main() {
         owner=$(getname)
         if [[ ${group} = UNKNOWN ]]; then
             group=${owner}
-            addgroup --system --gid "$group_id" "$group"
+            addgroup -S -g "$group_id" "$group"
         fi
-        adduser --system --uid=${owner_id} --gid=${group_id} "$owner"
+        adduser -S -u ${owner_id} -G "$owner" "$owner"
     fi
     prepare ${owner} ${group}
 

@@ -32,9 +32,10 @@ class LoadTestDataCommand extends ContainerAwareCommand
         /** @var WebhookRepository $repository */
         $repository = $this->getContainer()->get('webhook.repository');
 
-        for ($i = 1; $i <= 100; $i++) {
-            $webhook = new Webhook('http://httpbin.org/status/200', 'body');
+        for ($i = 1; $i <= 10; $i++) {
+            $webhook = new Webhook('http://httpbin.org/status/500', 'body');
             $repository->save($webhook);
+            $this->getContainer()->get('amqp.producer')->publish($webhook);
         }
     }
 }

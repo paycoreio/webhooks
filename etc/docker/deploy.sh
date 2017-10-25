@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -xe
 
-if ( [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_PHP_VERSION" == "7.0" ] ); then
+if ( ["$TRAVIS_PULL_REQUEST" == "false"] && ["$TRAVIS_PHP_VERSION" == "7.1"] ); then
   if ([ "$TRAVIS_BRANCH" == "master" ]) ; then
     composer install -o -q -n
     docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} -e ${DOCKER_EMAIL}
@@ -13,7 +13,7 @@ if ( [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_PHP_VERSION" == "7.0" ]
 
   if ([ ! -z "$TRAVIS_TAG" ]); then
     TAGGED="paymaxi/webhooks:${TRAVIS_TAG}"
-    cp .env.dist .env
+
     docker build -f etc/docker/php/Dockerfile.prod -t ${TAGGED} .
     docker push ${TAGGED}
   fi
