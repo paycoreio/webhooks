@@ -11,7 +11,6 @@ RUN apk --update --no-cache add \
     php7-phar \
     php7-intl \
     php7-iconv \
-    php7-fpm \
     php7-openssl \
     php7-zlib \
     php7-zip \
@@ -36,6 +35,10 @@ RUN apk --update --no-cache add \
     supervisor \
     curl \
     bash
+
+RUN set -x ; \
+  addgroup -g 82 -S www-data ; \
+  adduser -u 82 -D -S -G www-data www-data && exit 0 ; exit 1
 
 RUN curl -o /usr/local/bin/mantra -L https://github.com/pugnascotia/mantra/releases/download/0.0.1/mantra \
     && chmod +x /usr/local/bin/mantra

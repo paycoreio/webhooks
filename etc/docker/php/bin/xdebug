@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-PHP_IDE_CONFIG="serverName=cli.webhooks" $@
