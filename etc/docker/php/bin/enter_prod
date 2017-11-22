@@ -24,6 +24,6 @@ run "/app/bin/console doc:sc:up --force"
 run "/app/bin/console ca:cl"
 run "/app/bin/console enqueue:setup-broker -vvv"
 
-/app/bin/ppm config --host=0.0.0.0 --bootstrap=Symfony --workers=1 --static=0 --debug=0 --logging=0
+/app/vendor/bin/ppm config --host=0.0.0.0 --bootstrap=Symfony --workers=1 --static=0 --debug=0 --logging=0
 mkdir -p /var/log/supervisor/ && chown www-data:www-data /var/log/supervisor/
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
