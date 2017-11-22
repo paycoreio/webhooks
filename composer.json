@@ -30,7 +30,8 @@
       "": "src"
     },
     "classmap": [
-      "app/AppKernel.php"
+      "app/AppKernel.php",
+      "app/Symfony.php"
     ]
   },
   "autoload-dev": {
