@@ -39,7 +39,7 @@ class WebhookController extends Controller
      */
     public function createAction(Request $request): Response
     {
-        $data = json_decode($request->getContent(), true);
+        $data = json_decode((string)$request->getContent(), true);
 
         if (empty($data) || json_last_error() !== JSON_ERROR_NONE) {
             return new JsonResponse(['error' => 'Malformed json provided.'], 400);
@@ -152,7 +152,7 @@ class WebhookController extends Controller
 
         unset($data['url'], $data['body']);
 
-        if (null !== $data['strategy']) {
+        if (isset($data['strategy'])) {
             $name = $data['strategy']['name'];  
             $options = $data['strategy']['options'] ?? [];
 
