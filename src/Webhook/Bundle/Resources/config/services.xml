@@ -45,5 +45,10 @@
             <tag name="enqueue.client.processor"/>
         </service>
 
+        <service id="Webhook\Bundle\EventListener\TerminateEventListener">
+            <argument id="doctrine.orm.entity_manager" type="service"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
     </services>
 </container>
