@@ -10,9 +10,9 @@
         <field name="created" type="datetime"/>
         <field name="processed" type="datetime" nullable="true"/>
         <field name="expectedCode" type="integer"/>
-        <field name="expectedContent" type="string" nullable="true"/>
-        <field name="body" type="string"/>
-        <field name="url" type="string"/>
+        <field name="expectedContent" type="string" nullable="true" length="500"/>
+        <field name="body" type="string" length="2000"/>
+        <field name="url" type="string" length="2000"/>
         <field name="maxAttempts" type="integer"/>
         <field name="nextAttempt" type="datetime"/>
         <field name="strategy" type="object"/>
@@ -21,6 +21,6 @@
         <field name="status" type="string"/>
         <field name="statusDetails" type="string" nullable="true"/>
         <field name="metadata" type="json_array" nullable="true"/>
-        <field name="callbackUrl" type="string" nullable="true"/>
+        <field name="callbackUrl" type="string" nullable="true" length="2000"/>
     </entity>
 </doctrine-mapping>
