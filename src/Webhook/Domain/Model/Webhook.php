@@ -358,4 +358,12 @@ class Webhook implements \JsonSerializable
     {
         $this->callbackUrl = $callbackUrl;
     }
+
+    /**
+     * @param int $maxAttempts
+     */
+    public function setMaxAttempts(int $maxAttempts): void
+    {
+        $this->maxAttempts = $maxAttempts;
+    }
 }
