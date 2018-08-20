@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Webhook\Bundle\Repository;
 
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Webhook\Domain\Model\Webhook;
 use Webhook\Domain\Repository\WebhookRepositoryInterface;
@@ -17,7 +18,7 @@ use Webhook\Domain\Repository\WebhookRepositoryInterface;
 class WebhookRepository implements WebhookRepositoryInterface
 {
     /**
-     * @var EntityManager
+     * @var ObjectManager
      */
     private $em;
 
@@ -39,6 +40,22 @@ class WebhookRepository implements WebhookRepositoryInterface
     public function get($id)
     {
         return $this->em->find(Webhook::class, $id);
+    }
+
+    /**
+     * @param $reference
+     *
+     * @return null|object|Webhook
+     */
+    public function getByReference($reference)
+    {
+        $qb = $this->em->getRepository(Webhook::class)->createQueryBuilder('e');
+
+        $qb
+            ->where('e.reference=:reference')
+            ->setParameter('reference', $reference);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**

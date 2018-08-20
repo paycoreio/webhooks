@@ -26,9 +26,9 @@ final class RequestResult
      * RequestResult constructor.
      *
      * @param string $status
-     * @param string $details
+     * @param string|null $details
      */
-    private function __construct(string $status, string $details = '')
+    private function __construct(string $status, string $details = null)
     {
         $this->status = $status;
         $this->details = $details;

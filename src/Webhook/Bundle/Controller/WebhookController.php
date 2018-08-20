@@ -8,7 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\Choice;
@@ -109,6 +108,7 @@ class WebhookController extends Controller
                 'userAgent'       => new Optional(new Length(['min' => 1, 'max' => 128])),
                 'metadata'        => new Optional(new All(new Length(['min' => 1, 'max' => 128]))),
                 'callbackUrl'     => new Optional(new Url()),
+                'reference'       => new Optional(new Length(['min' => 1, 'max' => 255])),
             ]
         ]);
     }
@@ -125,6 +125,18 @@ class WebhookController extends Controller
         if (null === $message) {
             return new JsonResponse(['error' => 'Message not found'], 404);
         }
+
+        return new JsonResponse($message);
+    }
+
+    /**
+     * @param $id
+     *
+     * @return JsonResponse
+     */
+    public function getByReferenceAction($id): JsonResponse
+    {
+        $message = $this->get('webhook.repository')->getByReference($id);
 
         return new JsonResponse($message);
     }

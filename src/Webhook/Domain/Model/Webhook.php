@@ -82,6 +82,9 @@ class Webhook implements \JsonSerializable
     /** @var  null|string */
     private $callbackUrl;
 
+    /** @var null|string */
+    private $reference;
+
     /**
      * Webhook constructor.
      *
@@ -365,5 +368,21 @@ class Webhook implements \JsonSerializable
     public function setMaxAttempts(int $maxAttempts): void
     {
         $this->maxAttempts = $maxAttempts;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @param null|string $reference
+     */
+    public function setReference(?string $reference): void
+    {
+        $this->reference = $reference;
     }
 }

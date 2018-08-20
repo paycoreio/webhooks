@@ -22,5 +22,6 @@
         <field name="statusDetails" type="text" nullable="true"/>
         <field name="metadata" type="json_array" nullable="true"/>
         <field name="callbackUrl" type="text" nullable="true" length="2000"/>
+        <field name="reference" type="string" nullable="true" length="255"/>
     </entity>
 </doctrine-mapping>

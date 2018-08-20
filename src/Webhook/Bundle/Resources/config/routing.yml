@@ -11,6 +11,13 @@ webhooks_get:
     methods:
         - GET
 
+webhooks_get_reference:
+    path: /webhooks/reference/{id}
+    defaults:
+        _controller: WebhookBundle:Webhook:getByReference
+    methods:
+        - GET
+
 webhooks_get_last:
     path: /webhooks/
     defaults:
